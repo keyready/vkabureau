@@ -1,0 +1,28 @@
+@import 'reset';
+@import './variables/globals';
+@import './themes/normal';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.app,
+.app_modal,
+.app_drawer {
+    color: var(--primary-color);
+    font: var(--font-m);
+}
+
+.app {
+    background: var(--bg-gradient);
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+.page {
+    width: 100%;
+    padding: 0 80px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+}

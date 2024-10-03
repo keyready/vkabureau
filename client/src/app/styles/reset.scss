@@ -1,0 +1,16 @@
+form {
+    width: 100%;
+}
+
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 15px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--card-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--bg-color);
+}

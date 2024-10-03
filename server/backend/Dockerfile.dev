@@ -1,0 +1,14 @@
+FROM golang:1.23-alpine AS dev
+
+WORKDIR /app
+
+COPY . .
+
+RUN go mod download
+
+RUN go install github.com/air-verse/air@latest
+
+RUN chown root:root /app/build/main && \
+    chmod +x /app/build/main
+
+CMD ["air","-c",".air.toml"]
