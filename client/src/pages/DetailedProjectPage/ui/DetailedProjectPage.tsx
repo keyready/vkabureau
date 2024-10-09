@@ -1,10 +1,4 @@
-/**
- * - кинул запрос?
- * - ну да
- * - ну нихуя не произошло
- */
-
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RiGlobalLine } from '@remixicon/react';
@@ -12,7 +6,6 @@ import { RiGlobalLine } from '@remixicon/react';
 import classes from './DetailedProjectPage.module.scss';
 import { DetailedProjectPageSkeleton } from './DetailedProjectPageSkeleton';
 
-import { TaskFilter, TaskFilters, TasksList } from '@/entities/Task';
 import { Page } from '@/widgets/Page';
 import { classNames } from '@/shared/lib/classNames';
 import { PageTitle } from '@/shared/ui/PageTitle';
@@ -27,7 +20,6 @@ import {
 import { DynamicModuleLoader } from '@/shared/lib/DynamicModuleLoader';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HStack, VStack } from '@/shared/ui/Stack';
-import { AuthorBlock, UsersList } from '@/entities/User';
 
 interface DetailedProjectPageProps {
     className?: string;
@@ -43,8 +35,6 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
 
     const project = useSelector(getProjectData);
     const isProjectLoading = useSelector(getProjectIsLoading);
-
-    const [filters, setFilters] = useState<TaskFilter>({});
 
     useEffect(() => {
         if (projectId) {
@@ -80,16 +70,9 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                             >
                                 <h1 className="text-xl text-black uppercase">Задачи</h1>
                             </HStack>
-                            <TasksList filters={filters} projectId={Number(projectId)} />
                         </VStack>
 
                         <VStack gap="12px" maxW className="w-1/5 sticky top-20">
-                            <AuthorBlock project={project} />
-                            <UsersList
-                                projectId={Number(projectId)}
-                                users={project?.collaborators}
-                            />
-
                             <VStack
                                 maxW
                                 justify="start"
@@ -101,8 +84,6 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                                     <h2 className="text-left w-full text-l text-black">Языки</h2>
                                 </HStack>
                             </VStack>
-
-                            <TaskFilters filters={filters} setFilters={setFilters} />
                         </VStack>
                     </HStack>
                 </VStack>

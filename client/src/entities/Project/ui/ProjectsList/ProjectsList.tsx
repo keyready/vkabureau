@@ -19,8 +19,6 @@ interface ProjectsListProps {
 export const ProjectsList = (props: ProjectsListProps) => {
     const { className } = props;
 
-     
-
     const { data: projects, isLoading: isProjectsLoading } = useProjects();
 
     const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
@@ -34,8 +32,7 @@ export const ProjectsList = (props: ProjectsListProps) => {
             <VStack maxW className={classNames(classes.ProjectsList, {}, [className])}>
                 <div className="grid w-full grid-cols-3 gap-4">
                     {new Array(7).fill(0).map((_, index) => (
-                        <Skeleton dark width="100%" height={180}
-rounded={18} key={index} />
+                        <Skeleton dark width="100%" height={180} rounded={18} key={index} />
                     ))}
                 </div>
             </VStack>
@@ -45,13 +42,13 @@ rounded={18} key={index} />
     if (!projects?.length) {
         return (
             <VStack maxW className={classNames(classes.ProjectsList, {}, [className])}>
-                <h1 className="text-l text-black">{t('Вы пока не добавили ни одного проекта')}</h1>
+                <h1 className="text-l text-black">Вы пока не добавили ни одного проекта</h1>
                 <Button
                     className="fixed bottom-10 right-10 shadow-2xl"
                     onClick={handleImportProjectClick}
                 >
                     <RiImportLine />
-                    <p>{t('Импортировать проект')}</p>
+                    <p>Импортировать проект</p>
                 </Button>
                 <ImportReposModal isOpen={isModalOpened} setIsOpen={setIsModalOpened} />
             </VStack>
@@ -70,7 +67,7 @@ rounded={18} key={index} />
                 onClick={handleImportProjectClick}
             >
                 <RiImportLine className="text-white" />
-                <p className="text-white">{t('Импортировать проект')}</p>
+                <p className="text-white">Импортировать проект</p>
             </Button>
             <ImportReposModal isOpen={isModalOpened} setIsOpen={setIsModalOpened} />
         </VStack>

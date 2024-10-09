@@ -1,5 +1,5 @@
 import { Button, Input } from '@nextui-org/react';
-import { useMemo, useState } from 'react';
+import { FormEvent, useCallback, useMemo, useState } from 'react';
 import { RiEyeLine, RiEyeOffLine } from '@remixicon/react';
 import { useSelector } from 'react-redux';
 
@@ -7,28 +7,51 @@ import classes from './LoginForm.module.scss';
 
 import { classNames } from '@/shared/lib/classNames';
 import { VStack } from '@/shared/ui/Stack';
-import { getUserIsLoading, User } from '@/entities/User';
+import { getUserIsLoading, loginUser, User } from '@/entities/User';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
+import { toastDispatch } from '@/widgets/Toaster';
+import { fetchProfile } from '@/entities/Profile';
 
 interface LoginFormProps {
     className?: string;
+    onLoginSuccess?: () => void;
 }
 
 export const LoginForm = (props: LoginFormProps) => {
-    const { className } = props;
+    const { className, onLoginSuccess } = props;
 
     const [userForm, setUserForm] = useState<Partial<User>>({});
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
     const isUserLoading = useSelector(getUserIsLoading);
 
+    const dispatch = useAppDispatch();
+
     const isButtonDisabled = useMemo(
         () => isUserLoading || !userForm.login || !userForm.password,
         [isUserLoading, userForm.login, userForm.password],
     );
 
+    const handleFormSubmit = useCallback(
+        async (event: FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            const response = await toastDispatch(dispatch(loginUser(userForm)), {
+                loading: 'Вход...',
+                success: 'Здравия желаю!',
+                error: 'Ошибка входа!',
+            });
+            if (response.meta.requestStatus === 'fulfilled') {
+                setUserForm({});
+                onLoginSuccess?.();
+                dispatch(fetchProfile());
+            }
+        },
+        [dispatch, onLoginSuccess, userForm],
+    );
+
     return (
         <VStack maxW className={classNames(classes.LoginForm, {}, [className])}>
-            <form>
+            <form onSubmit={handleFormSubmit}>
                 <VStack maxW align="stretch" gap="16px">
                     <Input
                         value={userForm.login}
@@ -68,7 +91,12 @@ export const LoginForm = (props: LoginFormProps) => {
                             </Button>
                         }
                     />
-                    <Button isLoading={isUserLoading} color="primary" isDisabled={isButtonDisabled}>
+                    <Button
+                        type="submit"
+                        isLoading={isUserLoading}
+                        color="primary"
+                        isDisabled={isButtonDisabled}
+                    >
                         {isUserLoading ? 'Ожидайте...' : 'Вход'}
                     </Button>
                 </VStack>

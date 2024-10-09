@@ -1,13 +1,14 @@
 import { Navigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import { RoutePath } from '@/shared/config/routeConfig';
-import { USER_LOCALSTORAGE_KEY } from '@/shared/const';
+import { getProfileData } from '@/entities/Profile';
 
 interface RequireAuthProps {
     children: JSX.Element;
 }
 export function RequireAuth({ children }: RequireAuthProps) {
-    const auth = localStorage.getItem(USER_LOCALSTORAGE_KEY);
+    const auth = useSelector(getProfileData);
     const location = useLocation();
 
     if (!auth) {

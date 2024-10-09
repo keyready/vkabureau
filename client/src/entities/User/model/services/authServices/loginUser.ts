@@ -3,16 +3,17 @@ import { AxiosError, AxiosResponse } from 'axios';
 
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 import { USER_LOCALSTORAGE_KEY } from '@/shared/const';
+import { User } from '@/entities/User';
 
-export const loginUser = createAsyncThunk<void, string, ThunkConfig<string>>(
+export const loginUser = createAsyncThunk<void, Partial<User>, ThunkConfig<string>>(
     'User/loginUser',
-    async (code, thunkAPI) => {
+    async (user, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
             const response: AxiosResponse<{ accessToken: string }> = await extra.api.post(
                 '/api/login',
-                { code },
+                user,
             );
 
             if (response.status > 300) {

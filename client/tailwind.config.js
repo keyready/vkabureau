@@ -41,6 +41,9 @@ module.exports = {
                         primary: {
                             DEFAULT: '#0A2C5C',
                         },
+                        danger: {
+                            DEFAULT: '#e81b24',
+                        },
                     },
                 },
             },

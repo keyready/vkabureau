@@ -1,7 +1,6 @@
 import '@/app/styles/index.scss';
 import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
-import { NextUIProvider } from '@nextui-org/react';
 
 import { ThemeProvider } from '@/app/providers/ThemeProvider';
 import { App } from '@/app/App';
@@ -16,14 +15,12 @@ if (!container) {
 const root = createRoot(container);
 root.render(
     <BrowserRouter>
-        <NextUIProvider>
-            <StoreProvider>
-                <ErrorBoundary>
-                    <ThemeProvider>
-                        <App />
-                    </ThemeProvider>
-                </ErrorBoundary>
-            </StoreProvider>
-        </NextUIProvider>
+        <StoreProvider>
+            <ErrorBoundary>
+                <ThemeProvider>
+                    <App />
+                </ThemeProvider>
+            </ErrorBoundary>
+        </StoreProvider>
     </BrowserRouter>,
 );

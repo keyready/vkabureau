@@ -1,4 +1,4 @@
-export type { Task, TaskFilter } from './model/types/Task';
+export type { Task } from './model/types/Task';
 export type { TaskSchema } from './model/types/TaskSchema';
 export { TaskActions, TaskReducer } from './model/slice/TaskSlice';
 

@@ -1,17 +1,19 @@
 import { Tab, Tabs } from '@nextui-org/react';
 
+import { RegisterForm } from '../RegisterForm/RegisterForm';
+import { LoginForm } from '../LoginForm/LoginForm';
+
 import classes from './AuthBlockTabs.module.scss';
 
 import { classNames } from '@/shared/lib/classNames';
-import { RegisterForm } from '@/entities/User';
-import { LoginForm } from '@/entities/User/ui/LoginForm/LoginForm';
 
 interface AuthBlockTabsProps {
     className?: string;
+    onLoginSuccess?: () => void;
 }
 
 export const AuthBlockTabs = (props: AuthBlockTabsProps) => {
-    const { className } = props;
+    const { className, onLoginSuccess } = props;
 
     return (
         <Tabs
@@ -24,7 +26,7 @@ export const AuthBlockTabs = (props: AuthBlockTabsProps) => {
             className={classNames(classes.AuthBlockTabs, {}, [className])}
         >
             <Tab key="login" title="Авторизация">
-                <LoginForm />
+                <LoginForm onLoginSuccess={onLoginSuccess} />
             </Tab>
             <Tab key="register" title="Регистрация">
                 <RegisterForm />

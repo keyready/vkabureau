@@ -1,3 +1,4 @@
 /.idea
+/client/dist
 /client/node_modules
-/devServer
+/dev-server/node_modules

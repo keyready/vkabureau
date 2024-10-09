@@ -12,7 +12,11 @@ const initialState: ProfileSchema = {
 export const ProfileSlice = createSlice({
     name: 'ProfileSlice',
     initialState,
-    reducers: {},
+    reducers: {
+        logout: (state) => {
+            state.data = undefined;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchProfile.pending, (state) => {

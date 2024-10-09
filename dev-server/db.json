@@ -1,0 +1,61 @@
+{
+    "users": [
+        {
+            "id": "abcde",
+            "login": "keyready",
+            "password": "Tsz6cah1jWrlE7SY1Q83io90tC",
+            "accessToken": "EmCyeZyQvJvgtVxdqfwjHnOorTqNjrtxfvCvDnvwzXeVMsLThbkPzlmkRiQXRhTi",
+            "refreshToken": "IrZJbfgNaUhxLShKDtxgrXMYlXjabzjGqLWMpiaydRGXdjVOdvkzFkHdVinwdCAc"
+        },
+        {
+            "id": "abcde123",
+            "login": "v666k0",
+            "password": "qwerty123",
+            "created_at": "2024-10-08T00:00:00Z"
+        },
+        {
+            "id": "abcdefgj123",
+            "login": "dimapo10052003",
+            "password": "qwerty123",
+            "created_at": "2024-10-08T00:00:00Z"
+        }
+    ],
+    "profiles": [
+        {
+            "avatar": "avatar-13.webp",
+            "id": "abcde",
+            "lastname": "Корчак",
+            "firstname": "Родион",
+            "middlename": "Дмитриевич",
+            "rank": "private",
+            "division": "611/11 уч. гр.",
+            "created_at": "2024-10-08T00:00:00Z",
+            "accessToken": "EmCyeZyQvJvgtVxdqfwjHnOorTqNjrtxfvCvDnvwzXeVMsLThbkPzlmkRiQXRhTi"
+        }
+    ],
+    "projects": [
+        {
+            "id": "asdasd",
+            "title": "Разработка платформы учета научной деятельности",
+            "description": "Инновационная система для организации, отслеживания и анализа научной деятельности ученых, исследователей и студентов. Наша платформа призвана упростить процессы ведения научных проектов, облегчить коммуникацию между коллегами и обеспечить эффективное управление результатами исследований.",
+            "status": "created",
+            "author": "abcde",
+            "tasks": ["slkdfmlksfdmg"],
+            "createdAt": "2024-10-09T00:00:00Z",
+            "startedAt": "2024-10-12T00:00:00Z",
+            "finishedAt": ""
+        }
+    ],
+    "tasks": [
+        {
+            "id": "slkdfmlksfdmg",
+            "title": "Разработка дизайна платформы",
+            "description": "",
+            "status": "created",
+            "priority": "critical",
+            "contributors": ["abcde123", "abcdefgj123"],
+            "createdAt": "2024-10-09T00:00:00Z",
+            "updatedAt": "2024-10-09T00:00:00Z"
+        }
+    ]
+}
