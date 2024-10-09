@@ -2,7 +2,7 @@ import classes from './MainPage.module.scss';
 
 import { Page } from '@/widgets/Page';
 import { classNames } from '@/shared/lib/classNames';
-import { LoginButton } from '@/entities/User';
+import { AuthBlockTabs, LoginButton } from '@/entities/User';
 import { HStack, VStack } from '@/shared/ui/Stack';
 import GitHubLogoIcon from '@/shared/icons/big-github-logo.svg?react';
 import { Icon } from '@/shared/ui/Icon/Icon';
@@ -12,6 +12,8 @@ const MainPage = () => (
     <Page className={classNames(classes.MainPage, {}, [])}>
         <VStack maxW gap="24px">
             <PageTitle title="GMANAGE" />
+
+            <AuthBlockTabs />
 
             <HStack maxW className="px-5 py-3 rounded-xl bg-white">
                 <p className="text-black text-l">

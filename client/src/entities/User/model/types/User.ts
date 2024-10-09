@@ -1,13 +1,11 @@
-export interface ServerUser {
-    id: number;
+import { Profile } from '@/entities/Profile';
 
+export interface User {
+    id: string;
     login: string;
-    avatar: string;
-    createdAt: Date;
+    password: string;
 
-    bio: string;
-    name: string;
-    publicRepos: number;
+    created_at: string;
 }
 
-export type User = Partial<ServerUser>;
+export type RegisterUser = User & Profile;

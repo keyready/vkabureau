@@ -1,5 +1,4 @@
 import { Modal, ModalContent, ModalHeader, Tab, Tabs } from '@nextui-org/react';
-import { useTranslation } from 'react-i18next';
 import { Key, useCallback, useEffect, useState } from 'react';
 
 import { useRepos } from '../../api/ProjectsApi';
@@ -14,7 +13,7 @@ interface ImportReposModalProps {
 export const ImportReposModal = (props: ImportReposModalProps) => {
     const { className, isOpen, setIsOpen } = props;
 
-    const { t } = useTranslation();
+     
 
     const [activeTab, setActiveTab] = useState<string>('public');
     const [totalRepos, setTotalRepos] = useState<number>(1);

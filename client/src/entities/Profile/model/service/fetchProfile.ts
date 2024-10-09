@@ -1,17 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AxiosError } from 'axios';
-
-import { Commit } from '../types/Commit';
-
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
-export const fetchCommit = createAsyncThunk<Commit, string, ThunkConfig<string>>(
-    'Commit/fetchCommit',
-    async (CommitId, thunkAPI) => {
+import { Profile } from '../types/Profile';
+import { AxiosError } from 'axios';
+
+export const fetchProfile = createAsyncThunk<Profile, string, ThunkConfig<string>>(
+    'Profile/fetchProfile',
+    async (ProfileId, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.get<Commit>('/url');
+            const response = await extra.api.get<Profile>('/api');
 
             if (!response.data) {
                 throw new Error();

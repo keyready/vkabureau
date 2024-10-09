@@ -1,27 +1,24 @@
+import { Profile } from '@/entities/Profile';
+
 export enum TaskStatus {
-    NEW = 'new',
-    IN_PROGRESS = 'in_progress',
-    DONE = 'done',
+    CREATED = 'created',
+    PROGRESS = 'progress',
+    REVIEW = 'review',
+    COMPLETED = 'completed',
 }
 
 export enum TaskPriority {
-    BACKLOG = 'backlog',
+    FEATURE = 'feature',
     MEDIUM = 'medium',
     CRITICAL = 'critical',
 }
 
 export interface Task {
-    id: number;
     title: string;
     description: string;
     status: TaskStatus;
     priority: TaskPriority;
-    deadline: Date;
-    createdDate: Date;
-    executorId: string;
-}
-
-export interface TaskFilter {
-    status?: TaskStatus;
-    priority?: TaskPriority;
+    contributors: Profile[];
+    createdAt: Date;
+    updatedAt: Date;
 }

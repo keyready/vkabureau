@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { Button } from '@nextui-org/react';
 import { useCallback, useState } from 'react';
 import { RiImportLine } from '@remixicon/react';
@@ -20,7 +19,7 @@ interface ProjectsListProps {
 export const ProjectsList = (props: ProjectsListProps) => {
     const { className } = props;
 
-    const { t } = useTranslation();
+     
 
     const { data: projects, isLoading: isProjectsLoading } = useProjects();
 

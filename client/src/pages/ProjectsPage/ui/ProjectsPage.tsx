@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { memo } from 'react';
 
 import classes from './ProjectsPage.module.scss';
@@ -14,13 +13,12 @@ interface ProjectsPageProps {
 }
 
 const ProjectsPage = memo((props: ProjectsPageProps) => {
-    const { t } = useTranslation();
     const { className } = props;
 
     return (
         <Page className={classNames(classes.ProjectsPage, {}, [className])}>
             <VStack maxW gap="24px">
-                <PageTitle title={t('Мои проекты')} />
+                <PageTitle title="Мои проекты" />
                 <ProjectsList />
             </VStack>
         </Page>

@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 import { inviteMember } from '../../model/services/otherServices/inviteMember';
 
-import { UserCard, useUsers } from '@/entities/User';
+import { User, UserCard } from '@/entities/User';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { toastDispatch } from '@/widgets/Toaster';
@@ -19,7 +19,8 @@ interface InviteMemberModalProps {
 export const InviteMemberModal = (props: InviteMemberModalProps) => {
     const { projectId, isModalOpened, setIsModalOpened } = props;
 
-    const { data: users, isLoading: isUsersLoading } = useUsers();
+    const isUsersLoading = false;
+    const users: User[] = [];
 
     const dispatch = useAppDispatch();
 

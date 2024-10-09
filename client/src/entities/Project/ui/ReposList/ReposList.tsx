@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import { Divider, Pagination } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 
@@ -23,8 +22,6 @@ interface ReposListProps {
 export const ReposList = (props: ReposListProps) => {
     const { className, isLoading, repos, total } = props;
 
-    const { t } = useTranslation();
-
     const [page, setPage] = useState<number>(1);
 
     const [paginatedRepos, setPaginatedRepos] = useState<Project[]>([]);
@@ -37,8 +34,7 @@ export const ReposList = (props: ReposListProps) => {
         return (
             <VStack gap="12px" maxW className={classNames(classes.ProjectsList, {}, [className])}>
                 {new Array(5).fill(0).map((_, index) => (
-                    <Skeleton rounded={8} width="100%" height={60}
-key={index} />
+                    <Skeleton rounded={8} width="100%" height={60} key={index} />
                 ))}
             </VStack>
         );
@@ -47,7 +43,7 @@ key={index} />
     if (!repos?.length) {
         return (
             <VStack maxW className={classNames(classes.ProjectsList, {}, [className])}>
-                <p>{t('Кажется, у Вас нет репозиториев')}</p>
+                <p>Кажется, у Вас нет репозиториев</p>
             </VStack>
         );
     }

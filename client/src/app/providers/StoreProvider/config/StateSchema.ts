@@ -10,16 +10,16 @@ import { AxiosInstance } from 'axios';
 import { UserSchema } from '@/entities/User';
 import { rtkApi } from '@/shared/api/rtkApi';
 import { ProjectSchema } from '@/entities/Project';
-import { CommitSchema } from '@/entities/Commit';
 import { TaskSchema } from '@/entities/Task';
+import { ProfileSchema } from '@/entities/Profile';
 
 export interface StateSchema {
     user: UserSchema;
+    profile: ProfileSchema;
     [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
     // asynchronous reducers
     project?: ProjectSchema;
-    commit?: CommitSchema;
     task?: TaskSchema;
 }
 

@@ -1,14 +1,21 @@
-import { User } from '@/entities/User';
+import { Task } from '@/entities/Task';
+import { Profile } from '@/entities/Profile';
+
+export enum ProjectStatus {
+    CREATED = 'created',
+    PROGRESS = 'progress',
+    REVIEW = 'review',
+    COMPLETED = 'completed',
+}
 
 export interface Project {
-    id: number;
-    name: string;
+    id: string;
+    title: string;
     description: string;
-    commitsId: number[];
-    created_at: Date;
-    url: string;
-    author: User;
-    collaborators: User[];
-
-    private: boolean;
+    status: ProjectStatus;
+    author: Profile;
+    tasks: Task[];
+    createdAt: Date;
+    startedAt: Date;
+    finishedAt: Date;
 }
