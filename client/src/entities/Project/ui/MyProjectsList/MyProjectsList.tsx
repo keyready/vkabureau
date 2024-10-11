@@ -13,7 +13,7 @@ interface MyProjectsListProps {
 export const MyProjectsList = (props: MyProjectsListProps) => {
     const { className } = props;
 
-    const { data: projects, isLoading } = useProjects();
+    const { data: projects, isLoading } = useProjects(true);
 
     const navigate = useNavigate();
 

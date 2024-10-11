@@ -3,7 +3,7 @@ import { Task, TaskPriority, TaskStatus } from '../model/types/Task';
 import { rtkApi } from '@/shared/api/rtkApi';
 
 interface TaskApiProps {
-    projectId: number;
+    projectId: number | undefined;
     status?: TaskStatus;
     priority?: TaskPriority;
 }

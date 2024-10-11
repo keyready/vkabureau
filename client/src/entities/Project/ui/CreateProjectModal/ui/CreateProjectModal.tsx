@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 
 import { Project } from '../../../model/types/Project';
 import { getProjectIsCreating } from '../../../model/selectors/ProjectSelectors';
+import { createProject } from '../../../model/service/createProject';
+import { useProjects } from '../../../api/ProjectsApi';
 
 import classes from './CreateProjectModal.module.scss';
 
@@ -12,9 +14,8 @@ import { classNames } from '@/shared/lib/classNames';
 import { SidebarModal } from '@/shared/ui/SidebarModal';
 import { VStack } from '@/shared/ui/Stack';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
-import { createProject } from '@/entities/Project/model/service/createProject';
 import { MultiplyFilesInput } from '@/shared/ui/MultiplyFilesInput';
-import { useProjects } from '@/entities/Project/api/ProjectsApi';
+import { toastDispatch } from '@/widgets/Toaster';
 
 interface CreateProjectModalProps {
     className?: string;
@@ -50,12 +51,18 @@ export const CreateProjectModal = (props: CreateProjectModalProps) => {
                 files.forEach((file) => formData.append('documents', file));
             }
 
-            const result = await dispatch(createProject(formData));
+            const result = await toastDispatch(dispatch(createProject(formData)), {
+                loading: 'Создаем проект...',
+                success: 'Проект создан!',
+                error: 'Что-то сломалось',
+            });
             if (result.meta.requestStatus === 'fulfilled') {
                 refetch();
+                setNewProject({});
+                setIsOpened(false);
             }
         },
-        [refetch, dispatch, files, newProject?.description, newProject?.title],
+        [newProject.title, newProject.description, files, dispatch, refetch, setIsOpened],
     );
 
     return (
@@ -74,7 +81,7 @@ export const CreateProjectModal = (props: CreateProjectModalProps) => {
                         <VStack maxW gap="12px">
                             <Input
                                 isDisabled={isProjectCreating}
-                                value={newProject.title}
+                                value={newProject.title || ''}
                                 onChange={(event) =>
                                     setNewProject({ ...newProject, title: event.target.value })
                                 }
@@ -84,7 +91,7 @@ export const CreateProjectModal = (props: CreateProjectModalProps) => {
                             />
                             <Textarea
                                 isDisabled={isProjectCreating}
-                                value={newProject.description}
+                                value={newProject.description || ''}
                                 onChange={(event) =>
                                     setNewProject({
                                         ...newProject,

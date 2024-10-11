@@ -11,7 +11,7 @@ export const createTask = createAsyncThunk<string, Partial<Task>, ThunkConfig<st
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.post<string>('/api/projects/tasks/create', task);
+            const response = await extra.api.post<string>('/api/projects/task/create', task);
 
             if (!response.data) {
                 throw new Error();

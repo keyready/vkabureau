@@ -4,13 +4,13 @@ import { RiAddBoxLine } from '@remixicon/react';
 
 import { useProjects } from '../../api/ProjectsApi';
 import { ProjectPreviewCard } from '../ProjectPreviewCard/ProjectPreviewCard';
+import { CreateProjectModal } from '../CreateProjectModal/ui/CreateProjectModal';
 
 import classes from './ProjectsList.module.scss';
 
 import { classNames } from '@/shared/lib/classNames';
 import { VStack } from '@/shared/ui/Stack';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { CreateProjectModal } from '@/entities/Project/ui/CreateProjectModal/ui/CreateProjectModal';
 
 interface ProjectsListProps {
     className?: string;

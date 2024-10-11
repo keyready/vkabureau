@@ -21,6 +21,7 @@ import { DynamicModuleLoader } from '@/shared/lib/DynamicModuleLoader';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HStack, VStack } from '@/shared/ui/Stack';
 import { AuthorBlock } from '@/entities/Profile';
+import { TasksList } from '@/entities/Task';
 
 interface DetailedProjectPageProps {
     className?: string;
@@ -61,6 +62,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                 <VStack maxW gap="12px" className="relative">
                     <PageTitle title="Проект" />
                     <ProjectInfoBlock project={project} />
+
                     <HStack className="w-full items-start relative gap-4">
                         <VStack maxW className="w-8/12" gap="12px">
                             <HStack
@@ -71,6 +73,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                             >
                                 <h1 className="text-xl text-black uppercase">Задачи</h1>
                             </HStack>
+                            <TasksList />
                         </VStack>
 
                         <VStack gap="12px" maxW className="w-4/12 sticky top-20">
