@@ -3,20 +3,16 @@ import { AxiosError } from 'axios';
 
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
-interface AddProjectProps {
-    type: 'private' | 'public';
-    name: string;
-}
-
-export const addProject = createAsyncThunk<string, AddProjectProps, ThunkConfig<string>>(
-    'Project/addProject',
-    async (props, thunkAPI) => {
+export const createProject = createAsyncThunk<string, FormData, ThunkConfig<string>>(
+    'Project/createProject',
+    async (project, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.post<string>('/api/projects/import', {
-                name: props.name,
-                type: props.type,
+            const response = await extra.api.post<string>('/api/projects/create', project, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
 
             if (!response.data) {

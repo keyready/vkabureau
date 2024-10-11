@@ -59,7 +59,7 @@ export const AvatarDropdown = (props: AvatarDropdownProps) => {
         <Dropdown className={classNames('', {}, [className])}>
             <DropdownTrigger>
                 <Image
-                    className="cursor-pointer w-14 h-14 rounded-xl mb-10"
+                    className="cursor-pointer w-14 h-14 rounded-xl"
                     src={`/static/avatars/${userData?.avatar}`}
                     alt="avatar-1"
                 />

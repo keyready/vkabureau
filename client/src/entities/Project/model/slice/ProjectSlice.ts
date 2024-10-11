@@ -1,13 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ProjectSchema } from '../types/ProjectSchema';
-import { addProject } from '../service/addProject';
+import { createProject } from '../service/createProject';
 import { fetchProject } from '../service/fetchProject';
 import { Project } from '../types/Project';
 
 const initialState: ProjectSchema = {
     data: undefined,
     isLoading: false,
+    isCreating: false,
     error: undefined,
 };
 
@@ -17,15 +18,15 @@ export const ProjectSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(addProject.pending, (state) => {
+            .addCase(createProject.pending, (state) => {
                 state.error = undefined;
-                state.isLoading = true;
+                state.isCreating = true;
             })
-            .addCase(addProject.fulfilled, (state) => {
-                state.isLoading = false;
+            .addCase(createProject.fulfilled, (state) => {
+                state.isCreating = false;
             })
-            .addCase(addProject.rejected, (state, action) => {
-                state.isLoading = false;
+            .addCase(createProject.rejected, (state, action) => {
+                state.isCreating = false;
                 state.error = action.payload;
             })
 

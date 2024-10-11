@@ -8,7 +8,7 @@
 
     &:hover {
         background: rgba(255 255 255 / 60%);
-        outline: 2px solid #0A2C5C;
+        box-shadow: 4px 4px 20px 0 #0A2C5C;
         backdrop-filter: blur(4px);
     }
 }

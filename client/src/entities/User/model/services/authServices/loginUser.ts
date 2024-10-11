@@ -12,7 +12,7 @@ export const loginUser = createAsyncThunk<void, Partial<User>, ThunkConfig<strin
 
         try {
             const response: AxiosResponse<{ accessToken: string }> = await extra.api.post(
-                '/api/login',
+                '/api/user/login',
                 user,
             );
 

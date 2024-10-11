@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react';
-import { Image } from '@nextui-org/react';
 import { RiCalendarLine } from '@remixicon/react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,12 +22,12 @@ export const ProjectPreviewCard = (props: ProjectPreviewCardProps) => {
 
     const renderDate = useMemo(
         () =>
-            new Date(project.created_at).toLocaleDateString('ru-Ru', {
+            new Date(project.createdAt).toLocaleDateString('ru-Ru', {
                 month: 'long',
                 day: '2-digit',
                 year: 'numeric',
             }),
-        [project.created_at],
+        [project.createdAt],
     );
 
     const handleCardClick = useCallback(() => {
@@ -43,14 +42,10 @@ export const ProjectPreviewCard = (props: ProjectPreviewCardProps) => {
             maxW
             className={classNames(classes.ProjectPreviewCard, {}, [className])}
         >
-            <h1 className="text-l text-accent font-bold">{project.name}</h1>
+            <h1 className="text-l text-accent font-bold">{project.title}</h1>
             <HStack maxW>
                 <RiCalendarLine className="text-accent" />
                 <h2 className="text-black">{renderDate}</h2>
-            </HStack>
-            <HStack maxW>
-                <Image src={project.author.avatar} width={30} radius="full" />
-                <h2 className="text-black">{project.author.name}</h2>
             </HStack>
         </VStack>
     );

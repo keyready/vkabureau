@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useMemo, useState } from 'react';
 import { Autocomplete, AutocompleteItem, Button, Divider, Input } from '@nextui-org/react';
 import { useSelector } from 'react-redux';
 import { RiEyeLine, RiEyeOffLine } from '@remixicon/react';
@@ -7,8 +7,10 @@ import classes from './RegisterForm.module.scss';
 
 import { classNames } from '@/shared/lib/classNames';
 import { VStack } from '@/shared/ui/Stack';
-import { getUserIsLoading, RegisterUser } from '@/entities/User';
+import { getUserIsLoading, RegisterUser, signupUser } from '@/entities/User';
 import { ProfileRank, RenderedRanks } from '@/entities/Profile/model/types/Profile';
+import { toastDispatch } from '@/widgets/Toaster';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 
 interface RegisterFormProps {
     className?: string;
@@ -23,14 +25,12 @@ export const RegisterForm = (props: RegisterFormProps) => {
     const [repeatedPassword, setRepeatedPassword] = useState<string>('');
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
+    const dispatch = useAppDispatch();
+
     const isPasswordsEqual = useMemo(
         () => newUserForm.password === repeatedPassword,
         [newUserForm.password, repeatedPassword],
     );
-
-    useEffect(() => {
-        console.log(newUserForm);
-    }, [newUserForm]);
 
     const isButtonDisabled = useMemo(
         () =>
@@ -54,9 +54,18 @@ export const RegisterForm = (props: RegisterFormProps) => {
         ],
     );
 
-    const handleFormSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    }, []);
+    const handleFormSubmit = useCallback(
+        async (event: FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+
+            await toastDispatch(dispatch(signupUser(newUserForm)), {
+                loading: 'Регистрируем...',
+                success: 'Вы успешно зарегистрированы',
+                error: 'Попробуйте по-другому',
+            });
+        },
+        [dispatch, newUserForm],
+    );
 
     return (
         <VStack maxW className={classNames(classes.RegisterForm, {}, [className])}>
@@ -203,7 +212,12 @@ export const RegisterForm = (props: RegisterFormProps) => {
                         label="Подразделение"
                     />
 
-                    <Button color="primary" isDisabled={isButtonDisabled} isLoading={isUserLoading}>
+                    <Button
+                        type="submit"
+                        color="primary"
+                        isDisabled={isButtonDisabled}
+                        isLoading={isUserLoading}
+                    >
                         {isUserLoading ? 'Ожидайте...' : 'Регистрация'}
                     </Button>
                 </VStack>

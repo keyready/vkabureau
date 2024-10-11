@@ -12,6 +12,7 @@ export interface Project {
     id: string;
     title: string;
     description: string;
+    documents: string[];
     status: ProjectStatus;
     author: Profile;
     tasks: Task[];

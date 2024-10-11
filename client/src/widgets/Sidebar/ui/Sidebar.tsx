@@ -21,7 +21,7 @@ export const Sidebar = (props: SidebarProps) => {
     return (
         <aside className={classNames(classes.Sidebar, {}, [className])}>
             <VStack maxH maxW align="center">
-                <Image src="/static/logo.webp" width="75%" />
+                <Image src="/static/logo.webp" />
 
                 <VStack className="-translate-y-6" flexGrow maxW justify="center" align="center">
                     <VStack maxW gap="8px" justify="center" align="center">

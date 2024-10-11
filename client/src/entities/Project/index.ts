@@ -8,6 +8,8 @@ export {
     getProjectError,
 } from './model/selectors/ProjectSelectors';
 
-export { ProjectsList } from './ui/ProjectsList/ProjectsList';
 export { fetchProject } from './model/service/fetchProject';
+
+export { ProjectsList } from './ui/ProjectsList/ProjectsList';
 export { ProjectInfoBlock } from './ui/ProjectInfoBlock/ProjectInfoBlock';
+export { MyProjectsList } from './ui/MyProjectsList/MyProjectsList';

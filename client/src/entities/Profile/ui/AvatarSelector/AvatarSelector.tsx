@@ -1,7 +1,14 @@
-import { Image } from '@nextui-org/react';
-import { useState } from 'react';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Image } from '@nextui-org/react';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
-import { classNames } from '@/shared/lib/classNames';
+import { changeProfile } from '../../model/service/changeProfile';
+
+import classes from './AvatarSelector.module.scss';
+
+import { getProfileData } from '@/entities/Profile';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
+import { toastDispatch } from '@/widgets/Toaster';
 
 const AvatarsNames = [
     'avatar-1.webp',
@@ -34,30 +41,52 @@ interface AvatarSelectorProps {
 export const AvatarSelector = (props: AvatarSelectorProps) => {
     const { className } = props;
 
-    const [selectedAvatar, setSelectedAvatar] = useState<string>('');
+    const dispatch = useAppDispatch();
+
+    const profile = useSelector(getProfileData);
+
+    const handleChangeAvatar = useCallback(
+        async (avatar: string) => {
+            await toastDispatch(
+                dispatch(
+                    changeProfile({
+                        ...profile,
+                        avatar,
+                    }),
+                ),
+            );
+        },
+        [dispatch, profile],
+    );
 
     return (
-        <div className={classNames('grid grid-cols-5 gap-2', {}, [className])}>
-            {AvatarsNames.map((avatarName, index) => (
-                <button
-                    onClick={() => setSelectedAvatar(avatarName)}
-                    className={
-                        'hover:scale-110 hover:z-20 hover:outline-neutral-900 ' +
-                        'rounded-xl outline outline-2 outline-transparent duration-200'
-                    }
-                    type="button"
-                    aria-label={avatarName}
-                    key={index}
-                >
-                    <Image
-                        className={`w-16 h-16 rounded-xl hover:grayscale-0 duration-200 ${
-                            selectedAvatar === avatarName ? 'grayscale-0' : 'grayscale'
-                        }`}
-                        src={`/static/avatars/${avatarName}`}
-                        alt={avatarName}
-                    />
+        <Dropdown>
+            <DropdownTrigger>
+                <button className={classes.imageWrapper} type="button" aria-label="Ваш аватар">
+                    <Image className="w-32 h-32" src={`/static/avatars/${profile?.avatar}`} />
                 </button>
-            ))}
-        </div>
+            </DropdownTrigger>
+            <DropdownMenu
+                classNames={{
+                    list: 'grid grid-cols-4',
+                }}
+            >
+                {AvatarsNames.map((avatarName, index) => (
+                    <DropdownItem
+                        classNames={{
+                            base: `data-[hover=true]:bg-primary-400`,
+                        }}
+                        onClick={() => handleChangeAvatar(avatarName)}
+                        key={index}
+                    >
+                        <Image
+                            className="w-12 h-12"
+                            src={`/static/avatars/${avatarName}`}
+                            alt={avatarName}
+                        />
+                    </DropdownItem>
+                ))}
+            </DropdownMenu>
+        </Dropdown>
     );
 };

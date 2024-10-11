@@ -18,7 +18,7 @@ const ProjectsPage = memo((props: ProjectsPageProps) => {
     return (
         <Page className={classNames(classes.ProjectsPage, {}, [className])}>
             <VStack maxW gap="24px">
-                <PageTitle title="Мои проекты" />
+                <PageTitle title="Текущие проекты" />
                 <ProjectsList />
             </VStack>
         </Page>

@@ -1,17 +1,18 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { Task } from '../types/Task';
+import { Profile } from '../types/Profile';
 
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
+import { RegisterUser } from '@/entities/User';
 
-export const createTask = createAsyncThunk<string, Partial<Task>, ThunkConfig<string>>(
-    'Task/createTask',
-    async (task, thunkAPI) => {
+export const changeProfile = createAsyncThunk<Profile, Partial<RegisterUser>, ThunkConfig<string>>(
+    'Profile/changeProfile',
+    async (profile, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.post<string>('/api/projects/tasks/create', task);
+            const response = await extra.api.patch<Profile>(`/api/user/change`, profile);
 
             if (!response.data) {
                 throw new Error();

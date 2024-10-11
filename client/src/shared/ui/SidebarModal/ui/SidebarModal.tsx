@@ -22,7 +22,7 @@ export const SidebarModal = (props: SidebarModalProps) => {
 
     useEffect(() => {
         const handleKeyboardClicks = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
+            if (event.code === 'Escape') {
                 event.preventDefault();
                 setIsOpened(false);
             }
@@ -44,8 +44,7 @@ export const SidebarModal = (props: SidebarModalProps) => {
     };
 
     return createPortal(
-        <button
-            type="button"
+        <div
             aria-label="Close sidebar"
             onClick={() => setIsOpened(false)}
             className={cn(classes.backdrop, backdropMods, [classNames?.backdrop])}
@@ -56,7 +55,7 @@ export const SidebarModal = (props: SidebarModalProps) => {
             >
                 {children}
             </div>
-        </button>,
+        </div>,
         document.body.querySelector('#app') || document.body,
     );
 };

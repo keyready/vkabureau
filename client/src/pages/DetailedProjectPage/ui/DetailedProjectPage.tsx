@@ -1,7 +1,7 @@
 import { memo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RiGlobalLine } from '@remixicon/react';
+import { RiUser3Line } from '@remixicon/react';
 
 import classes from './DetailedProjectPage.module.scss';
 import { DetailedProjectPageSkeleton } from './DetailedProjectPageSkeleton';
@@ -20,6 +20,7 @@ import {
 import { DynamicModuleLoader } from '@/shared/lib/DynamicModuleLoader';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HStack, VStack } from '@/shared/ui/Stack';
+import { AuthorBlock } from '@/entities/Profile';
 
 interface DetailedProjectPageProps {
     className?: string;
@@ -61,7 +62,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                     <PageTitle title="Проект" />
                     <ProjectInfoBlock project={project} />
                     <HStack className="w-full items-start relative gap-4">
-                        <VStack maxW className="w-4/5" gap="12px">
+                        <VStack maxW className="w-8/12" gap="12px">
                             <HStack
                                 maxW
                                 justify="between"
@@ -72,7 +73,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                             </HStack>
                         </VStack>
 
-                        <VStack gap="12px" maxW className="w-1/5 sticky top-20">
+                        <VStack gap="12px" maxW className="w-4/12 sticky top-20">
                             <VStack
                                 maxW
                                 justify="start"
@@ -80,9 +81,12 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                                 className="p-5 rounded-xl bg-white"
                             >
                                 <HStack maxW>
-                                    <RiGlobalLine className="text-accent" size={24} />
-                                    <h2 className="text-left w-full text-l text-black">Языки</h2>
+                                    <RiUser3Line className="text-accent" size={24} />
+                                    <h2 className="text-left w-full text-l text-black">
+                                        Автор проекта
+                                    </h2>
                                 </HStack>
+                                <AuthorBlock author={project?.author} />
                             </VStack>
                         </VStack>
                     </HStack>

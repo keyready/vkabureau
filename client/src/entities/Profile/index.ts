@@ -14,3 +14,4 @@ export {
 
 export { ProfileBlock } from './ui/ProfileBlock/ProfileBlock';
 export { AvatarSelector } from './ui/AvatarSelector/AvatarSelector';
+export { AuthorBlock } from './ui/AuthorBlock/AuthorBlock';

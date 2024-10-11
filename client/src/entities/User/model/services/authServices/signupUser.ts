@@ -1,17 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
+import { RegisterUser } from '../../types/User';
+
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
-export const signupUser = createAsyncThunk<string, any, ThunkConfig<string>>(
+export const signupUser = createAsyncThunk<string, Partial<RegisterUser>, ThunkConfig<string>>(
     'User/signupUser',
     async (newUser, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.post<string>('/api/auth/sign-up', newUser);
+            const response = await extra.api.post<string>('/api/user/sign-up', {
+                ...newUser,
+                avatar: 'avatar-1.webp',
+            });
 
-            if (response.status > 300) {
+            if (!response.data) {
                 throw new Error();
             }
 

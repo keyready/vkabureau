@@ -17,7 +17,7 @@ server.use(async (req, res, next) => {
 });
 
 // Эндпоинт для логина
-server.post('/api/login', (req, res) => {
+server.post('/user/login', (req, res) => {
     try {
         const {login, password} = req.body;
         const db = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'db.json'), 'UTF-8'));
@@ -41,7 +41,7 @@ server.post('/api/login', (req, res) => {
     }
 });
 
-server.get('/api/profiles', (req, res) => {
+server.get('/profiles', (req, res) => {
     try {
         const {authorization} = req.headers
         const token = authorization.split('Bearer ')[1];
