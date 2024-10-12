@@ -22,7 +22,7 @@ import { DynamicModuleLoader } from '@/shared/lib/DynamicModuleLoader';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HStack, VStack } from '@/shared/ui/Stack';
 import { AuthorBlock } from '@/entities/Profile';
-import { TaskReducer, TasksList } from '@/entities/Task';
+import { ContributorsBlock, TaskReducer, TasksList } from '@/entities/Task';
 
 interface DetailedProjectPageProps {
     className?: string;
@@ -102,7 +102,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                             <VStack
                                 maxW
                                 justify="start"
-                                align="center"
+                                align="start"
                                 className="p-5 rounded-xl bg-white"
                             >
                                 <HStack maxW>
@@ -111,7 +111,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                                         Участники проекта
                                     </h2>
                                 </HStack>
-                                <AuthorBlock author={project?.author} />
+                                <ContributorsBlock />
                             </VStack>
                         </VStack>
                     </HStack>

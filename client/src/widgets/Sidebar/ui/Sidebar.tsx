@@ -1,4 +1,6 @@
 import { Image } from '@nextui-org/react';
+import { useSelector } from 'react-redux';
+import { RiChat4Line } from '@remixicon/react';
 
 import classes from './Sidebar.module.scss';
 
@@ -10,6 +12,7 @@ import HomeIcon from '@/shared/icons/home-icon.svg?react';
 import ProjectIcon from '@/shared/icons/projects-icon.svg?react';
 import { Icon } from '@/shared/ui/Icon/Icon';
 import { AvatarDropdown } from '@/widgets/AvatarDropdown';
+import { getProfileData } from '@/entities/Profile';
 
 interface SidebarProps {
     className?: string;
@@ -17,6 +20,8 @@ interface SidebarProps {
 
 export const Sidebar = (props: SidebarProps) => {
     const { className } = props;
+
+    const profile = useSelector(getProfileData);
 
     return (
         <aside className={classNames(classes.Sidebar, {}, [className])}>
@@ -31,6 +36,11 @@ export const Sidebar = (props: SidebarProps) => {
                         <AppLink to={RoutePath.projects}>
                             <Icon className="text-white" Svg={ProjectIcon} />
                         </AppLink>
+                        {profile?.id && (
+                            <AppLink to={RoutePath.chats}>
+                                <RiChat4Line size={36} className="text-white" />
+                            </AppLink>
+                        )}
                     </VStack>
                 </VStack>
 

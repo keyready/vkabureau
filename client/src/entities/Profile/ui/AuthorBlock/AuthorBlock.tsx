@@ -18,7 +18,7 @@ export const AuthorBlock = (props: AuthorBlockProps) => {
     const renderAuthorRank = useMemo(() => {
         const result = Object.entries(RenderedRanks).find(([key]) => key === author?.rank);
         if (!result) return 'н/д';
-        return result[1];
+        return result[1].title;
     }, [author?.rank]);
 
     return (

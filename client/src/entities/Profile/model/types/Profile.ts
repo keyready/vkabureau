@@ -20,26 +20,88 @@ export enum ProfileRank {
     'ARMYGENERAL' = 'armygeneral', // 'генерал армии',
 }
 
-export const RenderedRanks: Record<ProfileRank, string> = {
-    [ProfileRank.PRIVATE]: 'рядовой',
-    [ProfileRank.CORPORAL]: 'ефрейтор',
-    [ProfileRank.JUNIORSERGEANT]: 'младший сержант',
-    [ProfileRank.SERGEANT]: 'сержант',
-    [ProfileRank.SENIORSERGEANT]: 'старший сержант',
-    [ProfileRank.PETTY]: 'старшина',
-    [ProfileRank.OFFICERWARRANT]: 'прапорщик',
-    [ProfileRank.SENIORWARRANT]: 'старший прапорщик',
-    [ProfileRank.JUNIORLIEUTENANT]: 'младший лейтенант',
-    [ProfileRank.LIEUTENANT]: 'лейтенант',
-    [ProfileRank.SENIORLIEUTENANT]: 'старший лейтенант',
-    [ProfileRank.CAPTAIN]: 'капитан',
-    [ProfileRank.MAJOR]: 'майор',
-    [ProfileRank.LIEUTENANTCOLONEL]: 'подполковник',
-    [ProfileRank.COLONEL]: 'полковник',
-    [ProfileRank.GENERALMAJOR]: 'генерал-майор',
-    [ProfileRank.GENERALLIEUTENANT]: 'генерал-лейтенант',
-    [ProfileRank.GENERALCOLONEL]: 'генерал-полковник',
-    [ProfileRank.ARMYGENERAL]: 'генерал армии',
+interface Rank {
+    title: string;
+    order: number;
+}
+
+export const RenderedRanks: Record<ProfileRank, Rank> = {
+    [ProfileRank.PRIVATE]: {
+        title: 'рядовой',
+        order: 1,
+    },
+    [ProfileRank.CORPORAL]: {
+        title: 'ефрейтор',
+        order: 2,
+    },
+    [ProfileRank.JUNIORSERGEANT]: {
+        title: 'младший сержант',
+        order: 3,
+    },
+    [ProfileRank.SERGEANT]: {
+        title: 'сержант',
+        order: 4,
+    },
+    [ProfileRank.SENIORSERGEANT]: {
+        title: 'старший сержант',
+        order: 5,
+    },
+    [ProfileRank.PETTY]: {
+        title: 'старшина',
+        order: 6,
+    },
+    [ProfileRank.OFFICERWARRANT]: {
+        title: 'прапорщик',
+        order: 7,
+    },
+    [ProfileRank.SENIORWARRANT]: {
+        title: 'старший прапорщик',
+        order: 8,
+    },
+    [ProfileRank.JUNIORLIEUTENANT]: {
+        title: 'младший лейтенант',
+        order: 9,
+    },
+    [ProfileRank.LIEUTENANT]: {
+        title: 'лейтенант',
+        order: 10,
+    },
+    [ProfileRank.SENIORLIEUTENANT]: {
+        title: 'старший лейтенант',
+        order: 11,
+    },
+    [ProfileRank.CAPTAIN]: {
+        title: 'капитан',
+        order: 12,
+    },
+    [ProfileRank.MAJOR]: {
+        title: 'майор',
+        order: 13,
+    },
+    [ProfileRank.LIEUTENANTCOLONEL]: {
+        title: 'подполковник',
+        order: 14,
+    },
+    [ProfileRank.COLONEL]: {
+        title: 'полковник',
+        order: 15,
+    },
+    [ProfileRank.GENERALMAJOR]: {
+        title: 'генерал-майор',
+        order: 16,
+    },
+    [ProfileRank.GENERALLIEUTENANT]: {
+        title: 'генерал-лейтенант',
+        order: 17,
+    },
+    [ProfileRank.GENERALCOLONEL]: {
+        title: 'генерал-полковник',
+        order: 18,
+    },
+    [ProfileRank.ARMYGENERAL]: {
+        title: 'генерал армии',
+        order: 19,
+    },
 };
 
 export interface Profile {

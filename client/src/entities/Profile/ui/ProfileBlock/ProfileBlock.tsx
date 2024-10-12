@@ -5,10 +5,10 @@ import { Autocomplete, AutocompleteItem, Button, Input } from '@nextui-org/react
 import { AvatarSelector } from '../AvatarSelector/AvatarSelector';
 import { Profile, ProfileRank, RenderedRanks } from '../../model/types/Profile';
 import { getProfileData, getProfileIsPatching } from '../../model/selectors/ProfileSelectors';
+import { changeProfile } from '../../model/service/changeProfile';
 
 import { HStack, VStack } from '@/shared/ui/Stack';
 import { toastDispatch } from '@/widgets/Toaster';
-import { changeProfile } from '@/entities/Profile/model/service/changeProfile';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 
 interface ProfileBlockProps {
@@ -114,7 +114,7 @@ export const ProfileBlock = (props: ProfileBlockProps) => {
                         >
                             {(rank) => (
                                 <AutocompleteItem key={rank.value} value={rank.value}>
-                                    {rank.title}
+                                    {rank.title.title}
                                 </AutocompleteItem>
                             )}
                         </Autocomplete>

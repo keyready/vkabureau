@@ -41,7 +41,7 @@ export const TaskCard = (props: TaskCardProps) => {
     const isParticipatingAvailable = useMemo(
         () =>
             profile?.id !== project?.author.id &&
-            !task.contributors.find((pr) => pr.id === profile?.id),
+            !task.contributors.some((pr) => pr.id === profile?.id),
         [profile?.id, project?.author.id, task.contributors],
     );
 
@@ -56,7 +56,7 @@ export const TaskCard = (props: TaskCardProps) => {
     );
 
     const handleParticipateClick = useCallback(async () => {
-        await toastDispatch(
+        const result = await toastDispatch(
             dispatch(
                 participate({
                     taskId: task.id,
@@ -69,7 +69,11 @@ export const TaskCard = (props: TaskCardProps) => {
                 error: 'Что-то опять сломалось',
             },
         );
-    }, [dispatch, profile?.id, task.id]);
+
+        if (result.meta.requestStatus === 'fulfilled') {
+            refetch();
+        }
+    }, [refetch, dispatch, profile?.id, task.id]);
 
     const handleChangeStatus = useCallback(
         async (key: string) => {

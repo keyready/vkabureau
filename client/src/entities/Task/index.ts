@@ -6,3 +6,4 @@ export { getTaskData, getTaskIsLoading, getTaskError } from './model/selectors/T
 
 export { TasksList } from './ui/TasksList/TasksList';
 export { TasksFilters } from './ui/TaskFilters/TaskFilters';
+export { ContributorsBlock } from './ui/ContributorsBlock/ContributorsBlock';

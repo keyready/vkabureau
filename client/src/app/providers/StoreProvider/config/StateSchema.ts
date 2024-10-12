@@ -12,6 +12,7 @@ import { rtkApi } from '@/shared/api/rtkApi';
 import { ProjectSchema } from '@/entities/Project';
 import { TaskSchema } from '@/entities/Task';
 import { ProfileSchema } from '@/entities/Profile';
+import { ForumSchema } from '@/entities/Forum';
 
 export interface StateSchema {
     user: UserSchema;
@@ -21,6 +22,7 @@ export interface StateSchema {
     // asynchronous reducers
     project?: ProjectSchema;
     task?: TaskSchema;
+    forum?: ForumSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;

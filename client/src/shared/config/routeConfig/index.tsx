@@ -5,6 +5,7 @@ import { NotFound } from '@/pages/NotFound';
 import { ProjectsPage } from '@/pages/ProjectsPage';
 import { DetailedProjectPage } from '@/pages/DetailedProjectPage';
 import { FeedPage } from '@/pages/FeedPage';
+import { ChatsPage } from '@/pages/ChatsPage';
 
 export type AppRoutesProps = RouteProps & {
     authOnly?: boolean;
@@ -15,6 +16,7 @@ export enum AppRoutes {
     PROJECTS = 'projects',
     PROJECT = 'project',
     FEED = 'feed',
+    CHATS = 'chats',
 
     // last
     NOT_FOUND = 'not_found',
@@ -24,6 +26,7 @@ export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.MAIN]: '/',
     [AppRoutes.PROJECT]: '/projects/',
     [AppRoutes.PROJECTS]: '/projects',
+    [AppRoutes.CHATS]: '/chats',
 
     [AppRoutes.FEED]: '/feed',
 
@@ -52,6 +55,11 @@ export const routerConfig: Record<AppRoutes, AppRoutesProps> = {
     [AppRoutes.FEED]: {
         path: RoutePath.feed,
         element: <FeedPage />,
+        authOnly: true,
+    },
+    [AppRoutes.CHATS]: {
+        path: RoutePath.chats,
+        element: <ChatsPage />,
         authOnly: true,
     },
 

@@ -1,4 +1,4 @@
-import { Button, DatePicker, DateValue, Input } from '@nextui-org/react';
+import { Button, DatePicker, DateValue, Input, Textarea } from '@nextui-org/react';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { I18nProvider } from '@react-aria/i18n';
@@ -32,14 +32,14 @@ export const CreateTaskModal = (props: CreateTaskProps) => {
     const dispatch = useAppDispatch();
 
     const [newTask, setNewTask] = useState<Partial<Task>>({});
-    const [deadline, setDeadline] = useState<DateValue>();
+    const [deadline, setDeadline] = useState<DateValue | undefined>();
 
     useEffect(() => {
         if (deadline) {
             const { day, month, year } = deadline;
             setNewTask((prevState) => ({
                 ...prevState,
-                deadline: new Date(year, month, day),
+                deadline: new Date(year, month - 1, day),
             }));
         }
     }, [deadline]);
@@ -52,8 +52,7 @@ export const CreateTaskModal = (props: CreateTaskProps) => {
                 dispatch(
                     createTask({
                         title: newTask?.title,
-                        description:
-                            'Что-то сломалось... Что-то сломалось... Что-то сломалось... Что-то сломалось... Что-то сломалось...Что-то сломалось... Что-то сломалось...',
+                        description: newTask.description,
                         priority: TaskPriority.FEATURE,
                         projectId,
                         deadline: newTask.deadline,
@@ -68,9 +67,20 @@ export const CreateTaskModal = (props: CreateTaskProps) => {
 
             if (result.meta.requestStatus === 'fulfilled') {
                 onSuccess?.();
+                setIsOpened(false);
+                setNewTask({});
+                setDeadline(undefined);
             }
         },
-        [dispatch, newTask?.title, newTask.deadline, projectId, onSuccess],
+        [
+            dispatch,
+            newTask?.title,
+            newTask.description,
+            newTask.deadline,
+            projectId,
+            onSuccess,
+            setIsOpened,
+        ],
     );
 
     return (
@@ -98,6 +108,21 @@ export const CreateTaskModal = (props: CreateTaskProps) => {
                                 }
                                 autoFocus
                                 label="Задача"
+                                isRequired
+                            />
+                            <Textarea
+                                isDisabled={isTaskCreating}
+                                value={newTask.description || ''}
+                                onChange={(event) =>
+                                    setNewTask({
+                                        ...newTask,
+                                        description: event.target.value,
+                                    })
+                                }
+                                classNames={{
+                                    inputWrapper: 'h-auto',
+                                }}
+                                label="Описание задачи"
                                 isRequired
                             />
                             <I18nProvider>
