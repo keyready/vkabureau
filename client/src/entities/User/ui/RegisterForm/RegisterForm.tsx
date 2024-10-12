@@ -194,7 +194,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
                                 key={rank.value}
                                 value={rank.value}
                             >
-                                {rank.title}
+                                {rank.title.title}
                             </AutocompleteItem>
                         )}
                     </Autocomplete>

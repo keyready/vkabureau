@@ -47,8 +47,8 @@ export const ProjectsList = (props: ProjectsListProps) => {
         return (
             <DynamicModuleLoader reducers={{ project: ProjectReducer }}>
                 <VStack maxW className={classNames(classes.ProjectsList, {}, [className])}>
-                    <h1 className="text-l text-black">
-                        На платформе пока не добавлено ни одного проекта
+                    <h1 className="w-full text-center text-xl text-black">
+                        На платформу пока не добавлено ни одного проекта
                     </h1>
                     <Button
                         className="bg-accent fixed bottom-10 right-10 shadow-2xl"

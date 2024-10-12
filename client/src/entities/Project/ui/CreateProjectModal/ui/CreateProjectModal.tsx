@@ -26,7 +26,7 @@ interface CreateProjectModalProps {
 export const CreateProjectModal = (props: CreateProjectModalProps) => {
     const { className, isOpened, setIsOpened } = props;
 
-    const { refetch } = useProjects();
+    const { refetch } = useProjects(false);
 
     const isProjectCreating = useSelector(getProjectIsCreating);
 
