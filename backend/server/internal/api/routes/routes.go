@@ -27,5 +27,10 @@ func InitRoutes(mongodb *mongo.Database) *gin.Engine {
 	tc := controllers.NewTaskController(tu)
 	v1.NewTaskRoutes(tc, r)
 
+	fr := repository.NewForum(mongodb)
+	fu := usecase.NewForumUsecase(fr)
+	fc := controllers.NewForumControllers(fu)
+	v1.NewForumRoutes(r, fc)
+
 	return r
 }

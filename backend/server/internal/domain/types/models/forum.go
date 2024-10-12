@@ -2,20 +2,13 @@ package models
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"mime/multipart"
-	"time"
+	"server/internal/domain/types/dto"
 )
 
-type Message struct {
-	Author      string                  `bson:"author" json:"author"`
-	Body        string                  `bson:"body" json:"body"`
-	Attachments []*multipart.FileHeader `bson:"attachments" json:"attachments"`
-	CreatedAt   time.Time               `bson:"createdAt" json:"createdAt"`
-}
-
 type Forum struct {
-	Id        primitive.ObjectID   `bson:"_id,omitempty" json:"id"`
-	ProjectId primitive.ObjectID   `bson:"projectId,omitempty" json:"projectId"`
-	MembersId []primitive.ObjectID `bson:"membersId" json:"membersId"`
-	Messages  []Message            `bson:"messages" json:"messages"`
+	ID        primitive.ObjectID   `bson:"_id" json:"id"`
+	Title     string               `bson:"title" json:"title"`
+	EntityID  primitive.ObjectID   `bson:"entityId" json:"entityId"` // проект или задача
+	MembersID []primitive.ObjectID `bson:"membersId" json:"membersId"`
+	Messages  []dto.MessageData    `bson:"messages" json:"messages"`
 }

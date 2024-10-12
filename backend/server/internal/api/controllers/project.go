@@ -77,6 +77,7 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 		extFile := strings.Split(doc.Filename, ".")[len(strings.Split(doc.Filename, "."))-1]
 		doc.Filename = uuid.New().String() + "." + extFile
 		createProject.DocumentsNames = append(createProject.DocumentsNames, doc.Filename)
+		//TODO - сохранение документов к проекту
 		//savePath := fmt.Sprintf("/app/static/documents/%s", doc.Filename)
 		//uploadErr := ctx.SaveUploadedFile(doc, savePath)
 		//if uploadErr != nil {

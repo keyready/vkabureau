@@ -3,15 +3,16 @@ package usecase
 import (
 	"net/http"
 	"server/internal/domain/repository"
-	"server/internal/domain/types/models"
 	"server/internal/domain/types/request"
+	"server/internal/domain/types/response"
 	"time"
 )
 
 type TaskUsecase interface {
 	AddTask(addTask request.AddTask) (httpCode int, err error)
 	UpdateTask(updateTask request.UpdateTask) (httpCode int, err error)
-	FetchTaskForProject(projectId string) (httpCode int, err error, tasks []models.Task)
+	FetchTaskForProject(projectId string) (httpCode int, err error, tasks []response.TaskData)
+	JoinToTask(joinToTask request.JoinToTask) (httpCode int, err error)
 }
 
 type TaskUsecaseImpl struct {
@@ -22,7 +23,15 @@ func NewTaskRepository(taskRepo repository.TaskRepository) TaskUsecase {
 	return TaskUsecaseImpl{taskRepo: taskRepo}
 }
 
-func (t TaskUsecaseImpl) FetchTaskForProject(projectId string) (httpCode int, err error, tasks []models.Task) {
+func (t TaskUsecaseImpl) JoinToTask(joinToTask request.JoinToTask) (httpCode int, err error) {
+	httpCode, err = t.taskRepo.JoinToTask(joinToTask)
+	if err != nil {
+		return httpCode, err
+	}
+	return httpCode, nil
+}
+
+func (t TaskUsecaseImpl) FetchTaskForProject(projectId string) (httpCode int, err error, tasks []response.TaskData) {
 	httpCode, err, tasks = t.taskRepo.FetchTaskForProjects(projectId)
 	if err != nil {
 		return http.StatusInternalServerError, err, tasks

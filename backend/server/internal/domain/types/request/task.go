@@ -16,3 +16,8 @@ type UpdateTask struct {
 	NewStatus   string `json:"status"`
 	NewPriority string `json:"priority"`
 }
+
+type JoinToTask struct {
+	UserID string `json:"userId"`
+	TaskID string `json:"taskId"`
+}

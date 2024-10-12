@@ -14,4 +14,5 @@ func NewTaskRoutes(tc *controllers.TaskController, r *gin.Engine) {
 	taskRoutes.POST("/create", tc.CreateTask)
 	taskRoutes.POST("/update", tc.UpdateTask)
 	taskRoutes.GET("/:projectId", tc.FetchTaskForProjects)
+	taskRoutes.POST("/join", tc.JoinToTask)
 }

@@ -16,6 +16,22 @@ func NewTaskController(taskUsecase usecase.TaskUsecase) *TaskController {
 	return &TaskController{taskUsecase: taskUsecase}
 }
 
+func (tc *TaskController) JoinToTask(ctx *gin.Context) {
+	var joinToTask request.JoinToTask
+
+	bindErr := ctx.ShouldBindJSON(&joinToTask)
+	if bindErr != nil {
+		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
+	}
+
+	httpCode, usecaseErr := tc.taskUsecase.JoinToTask(joinToTask)
+	if usecaseErr != nil {
+		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+	}
+
+	ctx.JSON(httpCode, gin.H{})
+}
+
 func (tc *TaskController) FetchTaskForProjects(ctx *gin.Context) {
 	projectId := ctx.Param("projectId")
 

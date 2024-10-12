@@ -40,11 +40,11 @@ func (p ProjectRepositoryImpl) LikeProject(likeProject request.LikeProject) (htt
 
 	findProject := bson.M{"_id": projectId}
 
-	mongodErr := p.mongoDB.Collection("projects").
+	mongoErr := p.mongoDB.Collection("projects").
 		FindOne(context.TODO(), findProject).
 		Decode(&project)
-	if mongodErr != nil {
-		return http.StatusNotFound, fmt.Errorf("Не удалось извлечь объект лайков: %v", mongodErr)
+	if mongoErr != nil {
+		return http.StatusNotFound, fmt.Errorf("Не удалось извлечь объект лайков: %v", mongoErr)
 	}
 
 	followerExist := false
@@ -68,7 +68,7 @@ func (p ProjectRepositoryImpl) LikeProject(likeProject request.LikeProject) (htt
 		}
 	}
 
-	_, mongoErr := p.mongoDB.Collection("projects").
+	_, mongoErr = p.mongoDB.Collection("projects").
 		UpdateOne(context.Background(), findProject, update)
 	if mongoErr != nil {
 		return http.StatusInternalServerError, fmt.Errorf("Ошибка лайка/дизлайка: %s", mongoErr.Error())
@@ -242,7 +242,7 @@ func (p ProjectRepositoryImpl) CreateProject(createProject request.CreateProject
 		return http.StatusNotFound, fmt.Errorf("Автор %s не найден", createProject.Author)
 	}
 
-	_, err = p.mongoDB.
+	newProject, err := p.mongoDB.
 		Collection("projects").
 		InsertOne(context.Background(), &models.Project{
 			Title:       createProject.Title,
@@ -259,6 +259,17 @@ func (p ProjectRepositoryImpl) CreateProject(createProject request.CreateProject
 		})
 	if err != nil {
 		return http.StatusInternalServerError, fmt.Errorf("Ошибка создания проекта %s", createProject.Title)
+	}
+
+	_, mongoErr := p.mongoDB.Collection("forums").
+		InsertOne(context.Background(), models.Forum{
+			EntityID:  newProject.InsertedID.(primitive.ObjectID),
+			Title:     fmt.Sprintf("Форум для проекта %s", createProject.Title),
+			MembersID: []primitive.ObjectID{author.ID},
+			Messages:  []dto.MessageData{},
+		})
+	if mongoErr != nil {
+		return http.StatusInternalServerError, fmt.Errorf("Ошибка создания форума %s", mongoErr)
 	}
 
 	return http.StatusCreated, nil
