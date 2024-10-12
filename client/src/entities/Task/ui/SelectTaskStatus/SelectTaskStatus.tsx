@@ -1,9 +1,12 @@
 import { Select, SelectItem } from '@nextui-org/react';
-import { ChangeEvent, useCallback } from 'react';
+import { ChangeEvent, useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 import { TaskStatus } from '../../model/types/Task';
 
 import { classNames } from '@/shared/lib/classNames';
+import { getProjectData } from '@/entities/Project';
+import { getProfileData } from '@/entities/Profile';
 
 interface SelectBugProps {
     className?: string;
@@ -16,6 +19,14 @@ interface SelectBugProps {
 export const SelectTaskStatus = (props: SelectBugProps) => {
     const { defaultValue, className, setSelectedKey, isDisabled, selectedKey } = props;
 
+    const project = useSelector(getProjectData);
+    const profile = useSelector(getProfileData);
+
+    const isSelectorDisabled = useMemo(
+        () => project?.author.id !== profile?.id,
+        [profile?.id, project?.author.id],
+    );
+
     const handleSelectChange = useCallback(
         (e: ChangeEvent<HTMLSelectElement>) => {
             setSelectedKey(e.target.value);
@@ -25,24 +36,24 @@ export const SelectTaskStatus = (props: SelectBugProps) => {
 
     const renderTaskStatusText = useCallback((status: TaskStatus) => {
         switch (status) {
-            case TaskStatus.NEW:
+            case TaskStatus.CREATED:
                 return 'Новая';
-            case TaskStatus.DONE:
+            case TaskStatus.COMPLETED:
                 return 'Решена';
-            case TaskStatus.IN_PROGRESS:
+            case TaskStatus.PROGRESS:
                 return 'В процессе';
             default:
-                return '';
+                return 'На проверке';
         }
     }, []);
 
     const renderItemColor = useCallback((status: TaskStatus) => {
         switch (status) {
-            case TaskStatus.NEW:
+            case TaskStatus.CREATED:
                 return 'danger';
-            case TaskStatus.DONE:
+            case TaskStatus.COMPLETED:
                 return 'success';
-            case TaskStatus.IN_PROGRESS:
+            case TaskStatus.PROGRESS:
                 return 'warning';
             default:
                 return 'default';
@@ -52,7 +63,7 @@ export const SelectTaskStatus = (props: SelectBugProps) => {
     return (
         <Select
             isLoading={isDisabled}
-            isDisabled={isDisabled}
+            isDisabled={isDisabled || isSelectorDisabled}
             label="Статус задачи"
             className={classNames('', {}, [className])}
             aria-label="Выберите статус задачи"
@@ -61,34 +72,45 @@ export const SelectTaskStatus = (props: SelectBugProps) => {
             defaultSelectedKeys={new Set(defaultValue ? [defaultValue] : [])}
         >
             <SelectItem
-                aria-label={TaskStatus.DONE}
+                aria-label={TaskStatus.COMPLETED}
                 classNames={{
                     title: 'text-green-600',
                 }}
-                key={TaskStatus.DONE}
-                value={TaskStatus.DONE}
+                key={TaskStatus.COMPLETED}
+                value={TaskStatus.COMPLETED}
             >
-                {renderTaskStatusText(TaskStatus.DONE)}
+                {renderTaskStatusText(TaskStatus.COMPLETED)}
             </SelectItem>
             <SelectItem
-                aria-label={TaskStatus.IN_PROGRESS}
+                aria-label={TaskStatus.PROGRESS}
                 classNames={{
                     title: 'text-orange-500',
                 }}
-                key={TaskStatus.IN_PROGRESS}
-                value={TaskStatus.IN_PROGRESS}
+                key={TaskStatus.PROGRESS}
+                value={TaskStatus.PROGRESS}
             >
-                {renderTaskStatusText(TaskStatus.IN_PROGRESS)}
+                {renderTaskStatusText(TaskStatus.PROGRESS)}
             </SelectItem>
             <SelectItem
-                aria-label={TaskStatus.NEW}
+                showDivider
+                aria-label={TaskStatus.CREATED}
                 classNames={{
                     title: 'text-red-500',
                 }}
-                key={TaskStatus.NEW}
-                value={TaskStatus.NEW}
+                key={TaskStatus.CREATED}
+                value={TaskStatus.CREATED}
             >
-                {renderTaskStatusText(TaskStatus.NEW)}
+                {renderTaskStatusText(TaskStatus.CREATED)}
+            </SelectItem>
+            <SelectItem
+                aria-label={TaskStatus.REVIEW}
+                classNames={{
+                    title: 'text-green-700',
+                }}
+                key={TaskStatus.REVIEW}
+                value={TaskStatus.REVIEW}
+            >
+                {renderTaskStatusText(TaskStatus.REVIEW)}
             </SelectItem>
         </Select>
     );

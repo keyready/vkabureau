@@ -1,7 +1,8 @@
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RiUser3Line } from '@remixicon/react';
+import { RiGroupLine, RiUser3Line } from '@remixicon/react';
+import { Button } from '@nextui-org/react';
 
 import classes from './DetailedProjectPage.module.scss';
 import { DetailedProjectPageSkeleton } from './DetailedProjectPageSkeleton';
@@ -21,7 +22,7 @@ import { DynamicModuleLoader } from '@/shared/lib/DynamicModuleLoader';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HStack, VStack } from '@/shared/ui/Stack';
 import { AuthorBlock } from '@/entities/Profile';
-import { TasksList } from '@/entities/Task';
+import { TaskReducer, TasksList } from '@/entities/Task';
 
 interface DetailedProjectPageProps {
     className?: string;
@@ -37,6 +38,8 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
 
     const project = useSelector(getProjectData);
     const isProjectLoading = useSelector(getProjectIsLoading);
+
+    const [isFiltersOpened, setIsFiltersOpened] = useState<boolean>(false);
 
     useEffect(() => {
         if (projectId) {
@@ -57,7 +60,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
     }
 
     return (
-        <DynamicModuleLoader reducers={{ project: ProjectReducer }}>
+        <DynamicModuleLoader reducers={{ project: ProjectReducer, task: TaskReducer }}>
             <Page className={classNames(classes.DetailedProjectPage, {}, [className])}>
                 <VStack maxW gap="12px" className="relative">
                     <PageTitle title="Проект" />
@@ -72,11 +75,15 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                                 className="p-5 rounded-xl bg-white"
                             >
                                 <h1 className="text-xl text-black uppercase">Задачи</h1>
+                                <Button onClick={() => setIsFiltersOpened(true)}>Фильтры</Button>
                             </HStack>
-                            <TasksList />
+                            <TasksList
+                                isFiltersOpened={isFiltersOpened}
+                                setIsFiltersOpened={setIsFiltersOpened}
+                            />
                         </VStack>
 
-                        <VStack gap="12px" maxW className="w-4/12 sticky top-20">
+                        <VStack gap="12px" maxW className="w-4/12 sticky top-32">
                             <VStack
                                 maxW
                                 justify="start"
@@ -87,6 +94,21 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                                     <RiUser3Line className="text-accent" size={24} />
                                     <h2 className="text-left w-full text-l text-black">
                                         Автор проекта
+                                    </h2>
+                                </HStack>
+                                <AuthorBlock author={project?.author} />
+                            </VStack>
+
+                            <VStack
+                                maxW
+                                justify="start"
+                                align="center"
+                                className="p-5 rounded-xl bg-white"
+                            >
+                                <HStack maxW>
+                                    <RiGroupLine className="text-accent" size={24} />
+                                    <h2 className="text-left w-full text-l text-black">
+                                        Участники проекта
                                     </h2>
                                 </HStack>
                                 <AuthorBlock author={project?.author} />

@@ -1,25 +1,20 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { TaskPriority } from '../types/Task';
-
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
-interface CreateTaskProps {
-    projectId?: string;
-    title?: string;
-    description?: string;
-    priority?: TaskPriority;
-    deadline?: Date;
+interface ParticipateProps {
+    userId: string;
+    taskId: string;
 }
 
-export const createTask = createAsyncThunk<string, CreateTaskProps, ThunkConfig<string>>(
-    'Task/createTask',
-    async (task, thunkAPI) => {
+export const participate = createAsyncThunk<string, ParticipateProps, ThunkConfig<string>>(
+    'Task/participate',
+    async (props, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.post<string>('/api/tasks/create', task);
+            const response = await extra.api.post<string>('/api/tasks/join', props);
 
             if (!response.data) {
                 throw new Error();

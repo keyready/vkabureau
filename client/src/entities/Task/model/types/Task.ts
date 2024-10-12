@@ -1,16 +1,16 @@
 import { Profile } from '@/entities/Profile';
 
 export enum TaskStatus {
-    CREATED = 'created',
-    PROGRESS = 'progress',
-    REVIEW = 'review',
-    COMPLETED = 'completed',
+    CREATED = 'CREATED',
+    PROGRESS = 'PROGRESS',
+    REVIEW = 'REVIEW',
+    COMPLETED = 'COMPLETED',
 }
 
 export enum TaskPriority {
-    FEATURE = 'feature',
-    MEDIUM = 'medium',
-    CRITICAL = 'critical',
+    FEATURE = 'FEATURE',
+    MEDIUM = 'MEDIUM',
+    CRITICAL = 'CRITICAL',
 }
 
 export interface Task {
@@ -22,4 +22,5 @@ export interface Task {
     contributors: Profile[];
     createdAt: Date;
     updatedAt: Date;
+    deadline: Date;
 }

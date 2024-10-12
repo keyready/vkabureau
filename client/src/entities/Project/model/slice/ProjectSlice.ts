@@ -4,6 +4,7 @@ import { ProjectSchema } from '../types/ProjectSchema';
 import { createProject } from '../service/createProject';
 import { fetchProject } from '../service/fetchProject';
 import { Project } from '../types/Project';
+import { changeLikeStatus } from '../service/changeLikeStatus';
 
 const initialState: ProjectSchema = {
     data: undefined,
@@ -40,6 +41,18 @@ export const ProjectSlice = createSlice({
             })
             .addCase(fetchProject.rejected, (state, action) => {
                 state.isLoading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(changeLikeStatus.pending, (state) => {
+                state.error = undefined;
+                state.isLikeSending = true;
+            })
+            .addCase(changeLikeStatus.fulfilled, (state) => {
+                state.isLikeSending = false;
+            })
+            .addCase(changeLikeStatus.rejected, (state, action) => {
+                state.isLikeSending = false;
                 state.error = action.payload;
             });
     },

@@ -16,6 +16,10 @@ export interface Project {
     status: ProjectStatus;
     author: Profile;
     tasks: Task[];
+    likes: {
+        value: 0;
+        followersId: string[];
+    };
     createdAt: Date;
     startedAt: Date;
     finishedAt: Date;

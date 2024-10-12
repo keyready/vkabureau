@@ -5,4 +5,4 @@ export { TaskActions, TaskReducer } from './model/slice/TaskSlice';
 export { getTaskData, getTaskIsLoading, getTaskError } from './model/selectors/TaskSelectors';
 
 export { TasksList } from './ui/TasksList/TasksList';
-export { TaskFilters } from './ui/TaskFilters/TaskFilters';
+export { TasksFilters } from './ui/TaskFilters/TaskFilters';

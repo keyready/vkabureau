@@ -6,7 +6,7 @@ import { TaskPriority, TaskStatus } from '../types/Task';
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
 interface ChangeTaskProps {
-    taskId: number;
+    taskId: string;
     status: TaskStatus;
     priority: TaskPriority;
 }
@@ -17,10 +17,7 @@ export const changeTask = createAsyncThunk<string, ChangeTaskProps, ThunkConfig<
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.post<string>(`/api/tasks/${props.taskId}/change`, {
-                status: props.status,
-                priority: props.priority,
-            });
+            const response = await extra.api.post<string>(`/api/tasks/update`, props);
 
             if (!response.data) {
                 throw new Error();

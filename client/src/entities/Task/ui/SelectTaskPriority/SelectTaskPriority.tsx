@@ -1,9 +1,12 @@
 import { Select, SelectItem } from '@nextui-org/react';
-import { ChangeEvent, useCallback } from 'react';
+import { ChangeEvent, useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 import { TaskPriority } from '../../model/types/Task';
 
 import { classNames } from '@/shared/lib/classNames';
+import { getProjectData } from '@/entities/Project';
+import { getProfileData } from '@/entities/Profile';
 
 interface SelectBugProps {
     className?: string;
@@ -17,6 +20,14 @@ interface SelectBugProps {
 export const SelectTaskPriority = (props: SelectBugProps) => {
     const { defaultValue, isRequired, className, isDisabled, setSelectedKey, selectedKey } = props;
 
+    const project = useSelector(getProjectData);
+    const profile = useSelector(getProfileData);
+
+    const isSelectorDisabled = useMemo(
+        () => project?.author.id !== profile?.id,
+        [profile?.id, project?.author.id],
+    );
+
     const handleSelectChange = useCallback(
         (e: ChangeEvent<HTMLSelectElement>) => {
             setSelectedKey(e.target.value);
@@ -26,8 +37,8 @@ export const SelectTaskPriority = (props: SelectBugProps) => {
 
     const renderTaskPriorityText = useCallback((status: TaskPriority) => {
         switch (status) {
-            case TaskPriority.BACKLOG:
-                return 'Бэклог';
+            case TaskPriority.FEATURE:
+                return 'Обычный';
             case TaskPriority.CRITICAL:
                 return 'Критический';
             case TaskPriority.MEDIUM:
@@ -41,7 +52,7 @@ export const SelectTaskPriority = (props: SelectBugProps) => {
         switch (status) {
             case TaskPriority.CRITICAL:
                 return 'danger';
-            case TaskPriority.BACKLOG:
+            case TaskPriority.FEATURE:
                 return 'success';
             case TaskPriority.MEDIUM:
                 return 'warning';
@@ -59,18 +70,18 @@ export const SelectTaskPriority = (props: SelectBugProps) => {
             onChange={handleSelectChange}
             defaultSelectedKeys={new Set(defaultValue ? [defaultValue] : [])}
             isLoading={isDisabled}
-            isDisabled={isDisabled}
+            isDisabled={isDisabled || isSelectorDisabled}
             isRequired={isRequired}
         >
             <SelectItem
-                aria-label={TaskPriority.BACKLOG}
+                aria-label={TaskPriority.FEATURE}
                 classNames={{
                     title: 'text-green-600',
                 }}
-                key={TaskPriority.BACKLOG}
-                value={TaskPriority.BACKLOG}
+                key={TaskPriority.FEATURE}
+                value={TaskPriority.FEATURE}
             >
-                {renderTaskPriorityText(TaskPriority.BACKLOG)}
+                {renderTaskPriorityText(TaskPriority.FEATURE)}
             </SelectItem>
             <SelectItem
                 aria-label={TaskPriority.MEDIUM}

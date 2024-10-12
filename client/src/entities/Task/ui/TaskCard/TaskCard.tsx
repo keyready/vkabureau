@@ -1,30 +1,35 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Button } from '@nextui-org/react';
 
 import { Task, TaskPriority, TaskStatus } from '../../model/types/Task';
 import { SelectTaskPriority } from '../SelectTaskPriority/SelectTaskPriority';
 import { SelectTaskStatus } from '../SelectTaskStatus/SelectTaskStatus';
 import { changeTask } from '../../model/service/changeTask';
+import { getTaskIsLoading } from '../../model/selectors/TaskSelectors';
+import { useTasks } from '../../api/TaskApi';
+import { participate } from '../../model/service/participate';
 
 import { classNames } from '@/shared/lib/classNames';
 import { HStack, VStack } from '@/shared/ui/Stack';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { toastDispatch } from '@/widgets/Toaster';
-import { getTaskIsLoading } from '@/entities/Task';
-import { useTasks } from '@/entities/Task/api/TaskApi';
+import { getProfileData } from '@/entities/Profile';
+import { getProjectData } from '@/entities/Project';
 
 interface TaskCardProps {
     className?: string;
     task: Task;
-    projectId?: number;
+    projectId?: string;
 }
 
 export const TaskCard = (props: TaskCardProps) => {
     const { className, projectId, task } = props;
 
-    const { refetch } = useTasks({
-        projectId: projectId || -1,
-    });
+    const { refetch } = useTasks(projectId || '');
+
+    const profile = useSelector(getProfileData);
+    const project = useSelector(getProjectData);
 
     const [newPriority, setNewPriority] = useState<TaskPriority>(task.priority);
     const [newStatus, setNewStatus] = useState<TaskStatus>(task.status);
@@ -32,6 +37,13 @@ export const TaskCard = (props: TaskCardProps) => {
     const dispatch = useAppDispatch();
 
     const isTaskChanging = useSelector(getTaskIsLoading);
+
+    const isParticipatingAvailable = useMemo(
+        () =>
+            profile?.id !== project?.author.id &&
+            !task.contributors.find((pr) => pr.id === profile?.id),
+        [profile?.id, project?.author.id, task.contributors],
+    );
 
     const renderDate = useMemo(
         () =>
@@ -42,6 +54,22 @@ export const TaskCard = (props: TaskCardProps) => {
             })}`,
         [task.deadline],
     );
+
+    const handleParticipateClick = useCallback(async () => {
+        await toastDispatch(
+            dispatch(
+                participate({
+                    taskId: task.id,
+                    userId: profile?.id || '',
+                }),
+            ),
+            {
+                loading: 'Отправляем запрос...',
+                success: 'Теперь Вы в команде!',
+                error: 'Что-то опять сломалось',
+            },
+        );
+    }, [dispatch, profile?.id, task.id]);
 
     const handleChangeStatus = useCallback(
         async (key: string) => {
@@ -91,21 +119,34 @@ export const TaskCard = (props: TaskCardProps) => {
                 <p className="text-black">{task.description}</p>
             </VStack>
 
-            <VStack className="w-1/3">
-                <SelectTaskPriority
-                    isDisabled={isTaskChanging}
-                    className="!w-full"
-                    defaultValue={task.priority}
-                    selectedKey={newPriority}
-                    setSelectedKey={handleChangePriority}
-                />
-                <SelectTaskStatus
-                    isDisabled={isTaskChanging}
-                    className="!w-full"
-                    defaultValue={task.status}
-                    selectedKey={newStatus}
-                    setSelectedKey={handleChangeStatus}
-                />
+            <VStack className="w-2/3">
+                <HStack maxW>
+                    <SelectTaskPriority
+                        isDisabled={isTaskChanging}
+                        className="!w-full"
+                        defaultValue={task.priority}
+                        selectedKey={newPriority}
+                        setSelectedKey={handleChangePriority}
+                    />
+                    <SelectTaskStatus
+                        isDisabled={isTaskChanging}
+                        className="!w-full"
+                        defaultValue={task.status}
+                        selectedKey={newStatus}
+                        setSelectedKey={handleChangeStatus}
+                    />
+                </HStack>
+                {isParticipatingAvailable && (
+                    <Button
+                        isDisabled={isTaskChanging}
+                        isLoading={isTaskChanging}
+                        onClick={handleParticipateClick}
+                        color="primary"
+                        className="self-end"
+                    >
+                        {isTaskChanging ? 'Ожидайте...' : 'Откликнуться'}
+                    </Button>
+                )}
             </VStack>
         </HStack>
     );
