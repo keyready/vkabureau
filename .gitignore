@@ -2,3 +2,7 @@
 /client/dist
 /client/node_modules
 /dev-server/node_modules
+
+/backend/d-c.dev.yml
+/backend/server/Dockerfile.dev
+/backend/server/.air.toml

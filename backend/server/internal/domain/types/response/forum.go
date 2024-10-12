@@ -1,5 +1,5 @@
 package response
 
 type ProjectForum struct {
-	//TODO - что вернуть для проекта?
+	//TODO - что вернуть для форума проекта?
 }

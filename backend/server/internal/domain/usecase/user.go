@@ -15,9 +15,10 @@ import (
 
 type UserUsecase interface {
 	SignUp(signUp request.SignUp) (httpCode int, err error)
-	Login(login request.Login) (httpCode int, err error, loginResponse *response.LoginResponse)
-	Profile(login string) (httpCode int, err error, profile *response.ProfileData)
-	UserData(login string) (httpCode int, err error, userData *response.UserData)
+	Login(login request.Login) (httpCode int, err error, loginResponse response.LoginResponse)
+	Profile(login string) (httpCode int, err error, profile response.ProfileData)
+	UserData(login string) (httpCode int, err error, userData response.UserData)
+	ChangeProfile(changeProfile request.ChangeProfile) (httpCode int, err error, updateProfile request.ChangeProfile)
 }
 
 type UserUsecaseImpl struct {
@@ -29,30 +30,38 @@ func NewUserUsecaseImpl(userRepo repository.UserRepository) UserUsecase {
 	return &UserUsecaseImpl{userRepo: userRepo}
 }
 
-func (u *UserUsecaseImpl) UserData(ctx context.Context, login string) (httpCode int, err error, userData *response.UserData) {
-	httpCode, err, userData = u.userRepo.UserData(ctx, login)
+func (u *UserUsecaseImpl) ChangeProfile(changeProfile request.ChangeProfile) (httpCode int, err error, updateProfile request.ChangeProfile) {
+	httpCode, err, updateProfile = u.userRepo.ChangeProfile(changeProfile)
 	if err != nil {
-		return httpCode, err, nil
+		return httpCode, err, updateProfile
+	}
+	return httpCode, nil, updateProfile
+}
+
+func (u *UserUsecaseImpl) UserData(login string) (httpCode int, err error, userData response.UserData) {
+	httpCode, err, userData = u.userRepo.UserData(login)
+	if err != nil {
+		return httpCode, err, userData
 	}
 	return httpCode, nil, userData
 }
 
-func (u *UserUsecaseImpl) Profile(ctx context.Context, login string) (httpCode int, err error, profile *response.ProfileData) {
-	httpCode, err, profile = u.userRepo.Profile(ctx, login)
+func (u *UserUsecaseImpl) Profile(login string) (httpCode int, err error, profile response.ProfileData) {
+	httpCode, err, profile = u.userRepo.Profile(login)
 	if err != nil {
-		return httpCode, err, nil
+		return httpCode, err, profile
 	}
 	return httpCode, nil, profile
 }
 
-func (u *UserUsecaseImpl) SignUp(ctx context.Context, signUp request.SignUp) (httpCode int, err error) {
+func (u *UserUsecaseImpl) SignUp(signUp request.SignUp) (httpCode int, err error) {
 	hashPassword, _ := bcrypt.GenerateFromPassword([]byte(signUp.Password), bcrypt.DefaultCost)
 	signUp.Password = string(hashPassword)
 
 	createdAt, _ := time.Parse(time.RFC3339, time.Now().String())
 	signUp.CreatedAt = createdAt
 
-	httpCode, err = u.userRepo.SignUp(ctx, signUp)
+	httpCode, err = u.userRepo.SignUp(signUp)
 	if err != nil {
 		return httpCode, err
 	}
@@ -60,15 +69,15 @@ func (u *UserUsecaseImpl) SignUp(ctx context.Context, signUp request.SignUp) (ht
 	return httpCode, nil
 }
 
-func (u *UserUsecaseImpl) Login(ctx context.Context, login request.Login) (httpCode int, err error, loginResponse *response.LoginResponse) {
-	httpCode, err, userExist := u.userRepo.Login(ctx, login)
+func (u *UserUsecaseImpl) Login(login request.Login) (httpCode int, err error, loginResponse response.LoginResponse) {
+	httpCode, err, userExist := u.userRepo.Login(login)
 	if err != nil {
-		return httpCode, err, nil
+		return httpCode, err, loginResponse
 	}
 
 	passwdValid := bcrypt.CompareHashAndPassword([]byte(userExist.Password), []byte(login.Password))
 	if passwdValid != nil {
-		return http.StatusBadRequest, errors.New("Неверный пароль"), nil
+		return http.StatusBadRequest, errors.New("Неверный пароль"), loginResponse
 	}
 
 	loginResponse.AccessToken = helpers.GenerateAccessToken(dto.JwtPayload{Login: login.UserLogin})

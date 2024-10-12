@@ -7,10 +7,11 @@ import (
 )
 
 func NewUserRoutes(r *gin.Engine, uc *controllers.UserController) {
-	userRoutes := r.Group("/user")
+	userRoutes := r.Group("/api/user")
 
-	userRoutes.POST("/signup", uc.SignUp)
+	userRoutes.POST("/sign-up", uc.SignUp)
 	userRoutes.POST("/login", uc.Login)
 	userRoutes.GET("/profile/:login", middleware.SessionValidate(), uc.Profile)
 	userRoutes.GET("/userData", middleware.SessionValidate(), uc.UserData)
+	userRoutes.PATCH("/change", middleware.SessionValidate(), uc.ChangeProfile)
 }

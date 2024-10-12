@@ -2,20 +2,22 @@ package response
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"server/internal/domain/types/dto"
 	"server/internal/domain/types/enum"
 	"server/internal/domain/types/models"
 	"time"
 )
 
 type ProjectData struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	ID          primitive.ObjectID `bson:"_id" json:"id"`
 	Title       string             `bson:"title" json:"title"`
 	Description string             `bson:"description" json:"description"`
 
-	Status enum.Status `bson:"status" json:"status"`
+	Status enum.Status  `bson:"status" json:"status"`
+	Likes  dto.LikeData `bson:"likes" json:"likes"`
 
-	Author primitive.ObjectID `json:"author" bson:"author"`
-	Tasks  []models.Task      `bson:"tasks" json:"tasks"`
+	Author dto.MemberData `json:"author" bson:"author"`
+	Tasks  []models.Task  `bson:"tasks" json:"tasks"`
 
 	CreatedAt time.Time `bson:"createdAt" json:"createdAt"`
 

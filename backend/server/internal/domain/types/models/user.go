@@ -14,8 +14,10 @@ type User struct {
 	Middlename string `json:"middlename" bson:"middlename"`
 	Lastname   string `json:"lastname" bson:"lastname"`
 
+	Avatar string `json:"avatar" bson:"avatar"`
+
 	Rank     string `json:"rank" bson:"rank"`
 	Division string `json:"division" bson:"division"`
 
-	CreatedAt time.Time `json:"created_at" bson:"created_at"`
+	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
 }

@@ -16,6 +16,21 @@ func NewUserControllers(userUsecase usecase.UserUsecase) *UserController {
 	return &UserController{userUsecase: userUsecase}
 }
 
+func (uc UserController) ChangeProfile(ctx *gin.Context) {
+
+	var changeProfile request.ChangeProfile
+	if bindErr := ctx.ShouldBindJSON(&changeProfile); bindErr != nil {
+		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
+	}
+
+	httpCode, usecaseErr, updateProfile := uc.userUsecase.ChangeProfile(changeProfile)
+	if usecaseErr != nil {
+		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+	}
+
+	ctx.JSON(httpCode, updateProfile)
+}
+
 func (uc *UserController) UserData(ctx *gin.Context) {
 	login := ctx.GetString("login")
 

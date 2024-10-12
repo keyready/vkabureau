@@ -22,5 +22,10 @@ func InitRoutes(mongodb *mongo.Database) *gin.Engine {
 	pc := controllers.NewProjectController(pu)
 	v1.NewProjectRoutes(r, pc)
 
+	tr := repository.NewTaskRepository(mongodb)
+	tu := usecase.NewTaskRepository(tr)
+	tc := controllers.NewTaskController(tu)
+	v1.NewTaskRoutes(tc, r)
+
 	return r
 }

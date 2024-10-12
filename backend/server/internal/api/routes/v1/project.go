@@ -7,7 +7,7 @@ import (
 )
 
 func NewProjectRoutes(r *gin.Engine, pc *controllers.ProjectController) {
-	projectRoutes := r.Group("/projects")
+	projectRoutes := r.Group("/api/projects")
 
 	projectRoutes.Use(middleware.SessionValidate())
 
@@ -15,4 +15,6 @@ func NewProjectRoutes(r *gin.Engine, pc *controllers.ProjectController) {
 	projectRoutes.GET("", pc.FetchAllProjects)
 	projectRoutes.POST("/create", pc.CreateProject)
 	projectRoutes.POST("/update", pc.UpdateProject)
+	projectRoutes.GET("/own", pc.OwnProject)
+	projectRoutes.POST("/like", pc.LikeProject)
 }

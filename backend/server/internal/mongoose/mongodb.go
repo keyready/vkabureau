@@ -3,6 +3,7 @@ package mongoose
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
@@ -23,6 +24,14 @@ func MongoConnect() (mongoDB *mongo.Database) {
 	if mongoErr != nil {
 		err.ErrorHandler(ctx, &e.DatabaseError{Message: mongoErr.Error()})
 	}
+
+	mongoClient.Database("vkalance").
+		Collection("users").
+		Indexes().
+		CreateOne(context.Background(), mongo.IndexModel{
+			Keys:    bson.D{{Key: "login"}},
+			Options: options.Index().SetUnique(true),
+		})
 
 	return mongoClient.Database("vkalance")
 }

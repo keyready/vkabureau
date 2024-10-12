@@ -10,6 +10,8 @@ type SignUp struct {
 	Middlename string `json:"middlename" bson:"middlename"`
 	Lastname   string `json:"lastname" bson:"lastname"`
 
+	Avatar string `json:"avatar" bson:"avatar"`
+
 	Rank     string `json:"rank" bson:"rank"`
 	Division string `json:"division" bson:"division"`
 
@@ -19,4 +21,17 @@ type SignUp struct {
 type Login struct {
 	UserLogin string `json:"login" binding:"required" bson:"login"`
 	Password  string `json:"password" binding:"required" bson:"password"`
+}
+
+type ChangeProfile struct {
+	Login string `json:"login" binding:"required" bson:"login"`
+
+	Firstname  string `json:"firstname" bson:"firstname"`
+	Middlename string `json:"middlename" bson:"middlename"`
+	Lastname   string `json:"lastname" bson:"lastname"`
+
+	Avatar string `json:"avatar" bson:"avatar"`
+
+	Rank     string `json:"rank" bson:"rank"`
+	Division string `json:"division" bson:"division"`
 }
