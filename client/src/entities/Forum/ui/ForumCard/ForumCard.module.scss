@@ -1,3 +1,13 @@
 .ForumCard {
+    cursor: pointer;
+    padding: 30px 20px;
+    border-radius: 12px;
+    background: white;
+    transition: 200ms;
+    outline: 2px solid white;
 
+    &:hover {
+        box-shadow: 4px 4px 20px 0 #0A2C5C;
+        backdrop-filter: blur(4px);
+    }
 }

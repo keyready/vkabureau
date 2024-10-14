@@ -51,7 +51,7 @@ export const ContributorsBlock = (props: ContributorsBlockProps) => {
     }, [tasks]);
 
     if (!uniqueParticipants?.length) {
-        return <p className="text-black">В проекте пока нет участников</p>;
+        return <p className="text-black">В проекте пока нет исполнителей</p>;
     }
 
     return (

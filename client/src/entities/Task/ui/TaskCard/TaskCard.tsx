@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button } from '@nextui-org/react';
+import { add, formatDistance } from 'date-fns';
 
 import { Task, TaskPriority, TaskStatus } from '../../model/types/Task';
 import { SelectTaskPriority } from '../SelectTaskPriority/SelectTaskPriority';
@@ -33,6 +34,7 @@ export const TaskCard = (props: TaskCardProps) => {
 
     const [newPriority, setNewPriority] = useState<TaskPriority>(task.priority);
     const [newStatus, setNewStatus] = useState<TaskStatus>(task.status);
+    const [isContributorsShown, setIsContributorsShown] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
 
@@ -44,6 +46,18 @@ export const TaskCard = (props: TaskCardProps) => {
             !task.contributors.some((pr) => pr.id === profile?.id),
         [profile?.id, project?.author.id, task.contributors],
     );
+
+    const isDeadlineNear = useMemo(() => {
+        const deadline = new Date(task.deadline);
+        const before = add(deadline, { days: -3 });
+        const distance = Number(formatDistance(new Date(), before).split(' ')[0]);
+
+        if (distance <= 3) {
+            return 'text-red-500 font-bold';
+        }
+
+        return '';
+    }, [task.deadline]);
 
     const renderDate = useMemo(
         () =>
@@ -118,9 +132,32 @@ export const TaskCard = (props: TaskCardProps) => {
             <VStack maxW>
                 <HStack maxW>
                     <h1 className="text-l text-black">{task.title}</h1>
-                    <p className="text-xs text-gray-500">{renderDate}</p>
+                    <p className={`text-xs text-gray-500 ${isDeadlineNear}`}>{renderDate}</p>
                 </HStack>
                 <p className="text-black">{task.description}</p>
+
+                {task.contributors?.length ? (
+                    <button
+                        onClick={() => setIsContributorsShown((prevState) => !prevState)}
+                        type="button"
+                        className="text-black underline opacity-60"
+                    >
+                        {isContributorsShown ? 'Скрыть' : 'Показать исполнителей задачи'}
+                    </button>
+                ) : null}
+                {isContributorsShown && (
+                    <VStack maxW gap="0px">
+                        <p className="text-black leading-none">Исполнители задачи: </p>
+                        <ul className="list-inside list-decimal">
+                            {task.contributors.map((ctr) => (
+                                <li className="text-black leading-none">
+                                    {ctr.lastname} {ctr.firstname.slice(0, 1)}.{' '}
+                                    {ctr.middlename.slice(0, 1)}.
+                                </li>
+                            ))}
+                        </ul>
+                    </VStack>
+                )}
             </VStack>
 
             <VStack className="w-2/3">

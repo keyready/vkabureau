@@ -1,21 +1,19 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { Profile } from '../types/Profile';
-
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
-import { USER_LOCALSTORAGE_KEY } from '@/shared/const';
 
-export const fetchProfile = createAsyncThunk<Profile, void, ThunkConfig<string>>(
-    'Profile/fetchProfile',
-    async (_, thunkAPI) => {
+export const deleteMessage = createAsyncThunk<string, number, ThunkConfig<string>>(
+    'Telegram/deleteMessage',
+    async (messageId, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.get<Profile>(`/api/user/userData`);
+            const response = await extra.api.post<string>('/api/messages/delete', {
+                messageId,
+            });
 
             if (!response.data) {
-                localStorage.removeItem(USER_LOCALSTORAGE_KEY);
                 throw new Error();
             }
 

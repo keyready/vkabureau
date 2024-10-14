@@ -107,6 +107,7 @@ export const RenderedRanks: Record<ProfileRank, Rank> = {
 export interface Profile {
     id: string;
     avatar: string;
+    login: string;
     lastname: string;
     firstname: string;
     middlename: string;

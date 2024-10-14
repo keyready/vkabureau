@@ -108,7 +108,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                                 <HStack maxW>
                                     <RiGroupLine className="text-accent" size={24} />
                                     <h2 className="text-left w-full text-l text-black">
-                                        Участники проекта
+                                        Исполнители проекта
                                     </h2>
                                 </HStack>
                                 <ContributorsBlock />

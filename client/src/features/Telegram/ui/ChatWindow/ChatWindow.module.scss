@@ -1,0 +1,34 @@
+.ChatWindow {
+    height: 85vh;
+    border-radius: 18px;
+    background: white;
+}
+
+.chatHeader {
+    height: 80px;
+    padding: 10px 40px;
+    border-radius: 18px 18px 0 0;
+    background: var(--btn-bg-color);
+    z-index: 100;
+    position: relative
+}
+
+.avatarFallback {
+    border-radius: 50% !important;
+    max-width: none !important;
+    flex: 1 0 auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.helloMessage {
+    max-width: none !important;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.skeleton {
+    flex: 1 0 auto
+}

@@ -6,5 +6,6 @@ export const normalizeWordForm = (number: number, words_arr: string[]) => {
             number % 100 > 4 && number % 100 < 20 ? 2 : options[number % 10 < 5 ? number % 10 : 5]
         ];
     }
-    return `${number} ${words_arr[1]}`;
+
+    return words_arr[1];
 };

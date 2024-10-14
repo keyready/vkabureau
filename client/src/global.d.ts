@@ -17,7 +17,6 @@ declare module '*.svg?react' {
 }
 
 declare const IS_DEV: boolean;
-declare const __API__: string;
 
 type DeepPartial<T> = T extends object
     ? {

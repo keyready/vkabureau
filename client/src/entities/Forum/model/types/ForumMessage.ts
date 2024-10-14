@@ -1,11 +1,8 @@
-import { Profile } from '@/entities/Profile';
-
 export interface ForumMessage {
     id: string;
     forumId: string;
-    author: Profile;
-    message: {
-        body: string;
-        attachments: string[];
-    };
+    author: string;
+    body: string;
+    createdAt: Date;
+    attachments: string[];
 }

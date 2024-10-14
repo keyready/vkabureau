@@ -38,7 +38,7 @@ export const ForumsList = (props: ForumsListProps) => {
     }
 
     return (
-        <VStack maxW className={classNames(classes.ForumsList, {}, [className])}>
+        <VStack gap="12px" maxW className={classNames(classes.ForumsList, {}, [className])}>
             {forums?.map((forum) => (
                 <ForumCard forum={forum} key={forum.id} />
             ))}
