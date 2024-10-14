@@ -47,6 +47,50 @@ func (t TaskRepositoryImpl) JoinToTask(joinToTask request.JoinToTask) (httpCode 
 		return http.StatusInternalServerError, fmt.Errorf("Ошибка присоединения к задаче: %s", mongoErr.Error())
 	}
 
+	var project models.Project
+	mongoErr = t.mongoDB.Collection("projects").
+		FindOne(
+			context.Background(),
+			bson.M{
+				"tasks": bson.M{
+					"$elemMatch": bson.M{
+						"$eq": taskId,
+					},
+				},
+			},
+		).Decode(&project)
+
+	if mongoErr != nil {
+		return http.StatusInternalServerError, fmt.Errorf("Не нашел проект, которому принадлежит интерсующая тебя задача: %s", mongoErr.Error())
+	}
+
+	_, mongoErr = t.mongoDB.Collection("forums").
+		UpdateOne(
+			context.Background(),
+			bson.M{"entityId": project.ID},
+			bson.M{
+				"$addToSet": bson.M{
+					"membersId": contributorId,
+				},
+			},
+		)
+	if mongoErr != nil {
+		return http.StatusInternalServerError, fmt.Errorf("Ошибка добавления в общий чат проекта %s", mongoErr.Error())
+	}
+
+	_, mongoErr = t.mongoDB.Collection("forums"). //Добавил в чат к задаче
+							UpdateOne(
+			context.Background(),
+			bson.M{"entityId": taskId},
+			bson.M{
+				"$addToSet": bson.M{
+					"membersId": contributorId,
+				},
+			},
+		)
+	if mongoErr != nil {
+		return http.StatusInternalServerError, fmt.Errorf("Ошибка присоединения к чату таска: %s", mongoErr.Error())
+	}
 	return http.StatusOK, nil
 }
 
@@ -108,7 +152,7 @@ func (t TaskRepositoryImpl) AddTask(addTask request.AddTask) (httpCode int, err 
 	deadlineTime, _ := time.Parse(time.RFC3339, addTask.Deadline)
 
 	newTask, mongoErr := t.mongoDB.Collection("tasks").
-		InsertOne(context.Background(), models.Task{
+		InsertOne(context.Background(), &models.Task{
 			Title:        addTask.Title,
 			Description:  addTask.Description,
 			Priority:     enum.Priority(addTask.Priority),
@@ -132,16 +176,25 @@ func (t TaskRepositoryImpl) AddTask(addTask request.AddTask) (httpCode int, err 
 			},
 		)
 
+	if mongoErr != nil {
+		return http.StatusNotFound, fmt.Errorf("Ошибка добавление таска в проект %s", mongoErr)
+	}
+
+	var project models.Project
+	mongoErr = t.mongoDB.Collection("projects").
+		FindOne(context.Background(), bson.M{"_id": projectId}).
+		Decode(&project)
+
 	_, mongoErr = t.mongoDB.Collection("forums").
-		InsertOne(context.Background(), models.Forum{
+		InsertOne(context.Background(), &models.Forum{
 			EntityID:  newTask.InsertedID.(primitive.ObjectID),
-			Title:     fmt.Sprintf("Форум для задачи %s", addTask.Title),
-			MembersID: []primitive.ObjectID{},
+			Title:     fmt.Sprintf("Форум для задачи «%s»", addTask.Title),
+			MembersID: []primitive.ObjectID{project.Author},
 			Messages:  []dto.MessageData{},
 		})
 
 	if mongoErr != nil {
-		return http.StatusNotFound, fmt.Errorf("Ошибка добавление таска в проект %s", mongoErr)
+		return http.StatusInternalServerError, fmt.Errorf("Ошибка создания форума: %s", mongoErr.Error())
 	}
 
 	return http.StatusOK, nil

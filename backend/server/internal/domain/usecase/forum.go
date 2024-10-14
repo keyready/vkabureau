@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"server/internal/domain/repository"
 	"server/internal/domain/types/dto"
 	"server/internal/domain/types/models"
@@ -12,6 +13,7 @@ type ForumUsecase interface {
 	SendMessage(sendMessage request.SendMessage) (httpCode int, err error)
 	FetchAllMessages(forumIdString string) (httpCode int, err error, messages []dto.MessageData)
 	MyForums(me string) (httpCode int, err error, forums []models.Forum)
+	FetchOneForum(forumIdString string) (httpCode int, err error, forum models.Forum)
 }
 
 type ForumUsecaseImpl struct {
@@ -20,6 +22,15 @@ type ForumUsecaseImpl struct {
 
 func NewForumUsecase(forumRepo repository.ForumRepository) ForumUsecase {
 	return &ForumUsecaseImpl{forumRepo: forumRepo}
+}
+
+func (f ForumUsecaseImpl) FetchOneForum(forumIdString string) (httpCode int, err error, forum models.Forum) {
+	forumId, _ := primitive.ObjectIDFromHex(forumIdString)
+	httpCode, err, forum = f.forumRepo.FetchOneForum(forumId)
+	if err != nil {
+		return httpCode, err, forum
+	}
+	return httpCode, nil, forum
 }
 
 func (f ForumUsecaseImpl) MyForums(me string) (httpCode int, err error, forums []models.Forum) {
@@ -39,7 +50,7 @@ func (f ForumUsecaseImpl) FetchAllMessages(forumIdString string) (httpCode int, 
 }
 
 func (f ForumUsecaseImpl) SendMessage(sendMessage request.SendMessage) (httpCode int, err error) {
-	sendMessage.Message.CreatedAt = time.Now()
+	sendMessage.CreatedAt = time.Now()
 	httpCode, err = f.forumRepo.SendMessage(sendMessage)
 	if err != nil {
 		return httpCode, err

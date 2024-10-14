@@ -21,3 +21,8 @@ type User struct {
 
 	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
 }
+
+type RecoveryQuestion struct {
+	ID       primitive.ObjectID `json:"id" bson:"_id"`
+	Question string             `json:"question" bson:"question"`
+}

@@ -22,10 +22,23 @@ type UserRepository interface {
 	Profile(login string) (httpCode int, err error, profile response.ProfileData)
 	UserData(login string) (httpCode int, err error, userData response.UserData)
 	ChangeProfile(changeProfile request.ChangeProfile) (httpCode int, err error, updateProfile request.ChangeProfile)
+	FetchAllQuestions() (httpCode int, err error, questions []models.RecoveryQuestion)
 }
 
 func NewUserRepositoryImpl(mongoDB *mongo.Database) UserRepository {
 	return &UserRepositoryImpl{mongoDB: mongoDB}
+}
+
+func (u *UserRepositoryImpl) FetchAllQuestions() (httpCode int, err error, questions []models.RecoveryQuestion) {
+	cursor, _ := u.mongoDB.Collection("recovery_questions").
+		Find(context.TODO(), bson.M{})
+
+	cursorErr := cursor.All(context.TODO(), &questions)
+	if cursorErr != nil {
+		return http.StatusInternalServerError, fmt.Errorf("Ошибка декода контрольных вопросов %s", cursorErr), nil
+	}
+
+	return http.StatusOK, nil, questions
 }
 
 func (u *UserRepositoryImpl) ChangeProfile(changeProfile request.ChangeProfile) (httpCode int, err error, updateProfile request.ChangeProfile) {
@@ -53,7 +66,8 @@ func (u *UserRepositoryImpl) ChangeProfile(changeProfile request.ChangeProfile) 
 func (u *UserRepositoryImpl) Profile(login string) (httpCode int, err error, profile response.ProfileData) {
 	err = u.mongoDB.
 		Collection("users").
-		FindOne(u.ctx, bson.M{"login": login}).Decode(&profile)
+		FindOne(u.ctx, bson.M{"login": login}).
+		Decode(&profile)
 	if err != nil {
 		return http.StatusNotFound, fmt.Errorf("Невозможно просмотреть профиль %s", login), profile
 	}

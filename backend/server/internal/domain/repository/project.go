@@ -164,6 +164,16 @@ func (p ProjectRepositoryImpl) FetchAllProjects() (httpCode int, err error, proj
 
 func (p ProjectRepositoryImpl) FetchProject(projectId primitive.ObjectID) (httpCode int, err error, project response.ProjectData) {
 
+	var projectExist models.Project
+	mongoErr := p.mongoDB.Collection("projects").
+		FindOne(
+			context.Background(),
+			bson.M{"_id": projectId},
+		).Decode(&projectExist)
+	if mongoErr != nil {
+		return http.StatusNotFound, fmt.Errorf("Проект не сущесвует"), project
+	}
+
 	pipeline := mongo.Pipeline{
 		{
 			{"$match", bson.D{{"_id", projectId}}},
@@ -262,9 +272,9 @@ func (p ProjectRepositoryImpl) CreateProject(createProject request.CreateProject
 	}
 
 	_, mongoErr := p.mongoDB.Collection("forums").
-		InsertOne(context.Background(), models.Forum{
+		InsertOne(context.Background(), &models.Forum{
 			EntityID:  newProject.InsertedID.(primitive.ObjectID),
-			Title:     fmt.Sprintf("Форум для проекта %s", createProject.Title),
+			Title:     fmt.Sprintf("Форум для проекта «%s»", createProject.Title),
 			MembersID: []primitive.ObjectID{author.ID},
 			Messages:  []dto.MessageData{},
 		})

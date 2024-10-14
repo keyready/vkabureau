@@ -6,7 +6,7 @@ import (
 )
 
 type Forum struct {
-	ID        primitive.ObjectID   `bson:"_id" json:"id"`
+	ID        primitive.ObjectID   `bson:"_id,omitempty" json:"id"`
 	Title     string               `bson:"title" json:"title"`
 	EntityID  primitive.ObjectID   `bson:"entityId" json:"entityId"` // проект или задача
 	MembersID []primitive.ObjectID `bson:"membersId" json:"membersId"`

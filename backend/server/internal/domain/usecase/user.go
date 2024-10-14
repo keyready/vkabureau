@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"server/internal/domain/repository"
 	"server/internal/domain/types/dto"
+	"server/internal/domain/types/models"
 	"server/internal/domain/types/request"
 	"server/internal/domain/types/response"
 	"server/pkg/helpers"
@@ -19,6 +20,7 @@ type UserUsecase interface {
 	Profile(login string) (httpCode int, err error, profile response.ProfileData)
 	UserData(login string) (httpCode int, err error, userData response.UserData)
 	ChangeProfile(changeProfile request.ChangeProfile) (httpCode int, err error, updateProfile request.ChangeProfile)
+	FetchAllQuestions() (httpCode int, err error, questions []models.RecoveryQuestion)
 }
 
 type UserUsecaseImpl struct {
@@ -28,6 +30,11 @@ type UserUsecaseImpl struct {
 
 func NewUserUsecaseImpl(userRepo repository.UserRepository) UserUsecase {
 	return &UserUsecaseImpl{userRepo: userRepo}
+}
+
+func (u *UserUsecaseImpl) FetchAllQuestions() (httpCode int, err error, questions []models.RecoveryQuestion) {
+	httpCode, _, questions = u.userRepo.FetchAllQuestions()
+	return httpCode, nil, questions
 }
 
 func (u *UserUsecaseImpl) ChangeProfile(changeProfile request.ChangeProfile) (httpCode int, err error, updateProfile request.ChangeProfile) {

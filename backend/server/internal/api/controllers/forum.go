@@ -20,6 +20,28 @@ func NewForumControllers(forumUsecase usecase.ForumUsecase) *ForumController {
 	return &ForumController{forumUsecase: forumUsecase}
 }
 
+func (f *ForumController) FetchAllMessages(ctx *gin.Context) {
+	forumId := ctx.Param("forumId")
+
+	httpCode, usecaseErr, messages := f.forumUsecase.FetchAllMessages(forumId)
+	if usecaseErr != nil {
+		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+	}
+
+	ctx.JSON(httpCode, messages)
+}
+
+func (f *ForumController) FetchOneForum(ctx *gin.Context) {
+	forumId := ctx.Param("forumId")
+
+	httpCode, usecaseErr, forum := f.forumUsecase.FetchOneForum(forumId)
+	if usecaseErr != nil {
+		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+	}
+
+	ctx.JSON(httpCode, forum)
+}
+
 func (f *ForumController) MyForums(ctx *gin.Context) {
 	me := ctx.GetString("login")
 
@@ -31,29 +53,28 @@ func (f *ForumController) MyForums(ctx *gin.Context) {
 	ctx.JSON(httpCode, forums)
 }
 
-func (f *ForumController) FetchAllMessageForForum(ctx *gin.Context) {
-
-}
-
 func (f *ForumController) SendMessage(ctx *gin.Context) {
 	var sendMessage request.SendMessage
 
-	bindErr := ctx.ShouldBindJSON(&sendMessage)
+	bindErr := ctx.ShouldBind(&sendMessage)
 	if bindErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
 	}
 
-	sendMessage.Message.Author = ctx.GetString("login")
-	sendMessage.Message.CreatedAt = time.Now()
+	sendMessage.Author = ctx.GetString("login")
+	sendMessage.CreatedAt = time.Now()
 
-	for _, img := range sendMessage.Message.Attachments {
+	for _, img := range sendMessage.Attachments {
 		img.Filename = fmt.Sprintf(
 			"%s.%s",
 			uuid.NewString(),
 			strings.Split(img.Filename, ".")[len(strings.Split(img.Filename, "."))-1],
 		)
-		sendMessage.Message.AttachmentsName = append(sendMessage.Message.AttachmentsName, img.Filename)
-		//TODO - загрука файла на сервер
+		sendMessage.AttachmentsName = append(sendMessage.AttachmentsName, img.Filename)
+		savePath := fmt.Sprintf("/app/static/messages/%s", img.Filename)
+		if uploadErr := ctx.SaveUploadedFile(img, savePath); uploadErr != nil {
+			err.ErrorHandler(ctx, &e.ServerError{Message: uploadErr.Error()})
+		}
 	}
 
 	httpCode, usecaseErr := f.forumUsecase.SendMessage(sendMessage)

@@ -1,0 +1,131 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_curve, auc
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# 1. Считываем файл Excel
+file_path = input("Введите путь к файлу Excel: ")
+
+try:
+    data = pd.read_excel(file_path)
+    print(f"Количество строк: {data.shape[0]}")
+    print(f"Количество столбцов: {data.shape[1]}")
+except Exception as e:
+    print(f"Ошибка при загрузке файла: {e}")
+    exit()
+
+# 2. Вводим номера столбцов для признаков и целевой переменной
+features_index = input("Введите номера столбцов признаков, разделенные запятыми: ").split(',')
+target_index = input("Введите номер столбца целевой переменной: ")
+
+try:
+    features_index = [int(i) for i in features_index]
+    X = data.iloc[:, features_index]
+    y = data.iloc[:, int(target_index)]
+except (ValueError, IndexError) as e:
+    print(f"Ошибка при выборе столбцов: {e}")
+    exit()
+
+# 3. Проверяем наличие пропусков
+missing_info = X.isnull().sum()
+total_missing = missing_info[missing_info > 0].sum()
+
+if total_missing > 0:
+    print(f"Общее количество пропущенных значений до заполнения: {total_missing}")
+    X = X.fillna(X.mean())  # Простой метод заполнения средним
+else:
+    print("Пропущенные значения отсутствуют.")
+
+# 4. Масштабируем данные
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 5. Делим данные на обучающую, валидационную и тестовую выборки
+train_size = float(input("Введите долю обучающей выборки (например, 0.6 для 60%): "))
+val_size = float(input("Введите долю валидационной выборки (например, 0.2 для 20%): "))
+test_size = 1 - train_size - val_size
+
+X_train, X_temp, y_train, y_temp = train_test_split(X_scaled, y, test_size=test_size, random_state=42)
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+
+# 6. Запрашиваем параметры для модели
+hidden_layer_sizes = tuple(map(int, input("Введите размеры скрытых слоев (например, 100,50): ").split(',')))
+activation = input("Введите функцию активации (identity, logistic, tanh, relu): ")
+learning_rate_init = float(input("Введите начальную скорость обучения (например, 0.001): "))
+max_iter = int(input("Введите максимальное количество итераций (например, 500): "))
+
+# 7. Обучаем модель Перцептрон
+model = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes, activation=activation, 
+                      learning_rate_init=learning_rate_init, max_iter=max_iter, random_state=42)
+model.fit(X_train, y_train)
+
+# 8. Оцениваем модель на валидационной выборке
+y_val_pred = model.predict(X_val)
+val_accuracy = accuracy_score(y_val, y_val_pred)
+print(f"Точность модели на валидационной выборке: {val_accuracy:.2f}")
+
+# 9. Визуализация
+# 9.1 Матрица ошибок
+conf_matrix = confusion_matrix(y_val, y_val_pred)
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', cbar=False, 
+            xticklabels=np.unique(y), yticklabels=np.unique(y))
+plt.title('Матрица ошибок')
+plt.xlabel('Предсказанные метки')
+plt.ylabel('Истинные метки')
+plt.show()
+
+# 9.2 Визуализация весов
+weights = model.coefs_
+plt.figure(figsize=(12, 8))
+for i, layer_weights in enumerate(weights):
+    plt.subplot(1, len(weights), i + 1)
+    sns.heatmap(layer_weights, cmap='viridis', cbar=True)
+    plt.title(f'Веса слоя {i + 1}')
+plt.tight_layout()
+plt.show()
+
+# 9.3 Распределение активации скрытых слоев
+activations = model.predict(X_scaled)
+plt.figure(figsize=(10, 6))
+sns.histplot(activations, bins=30, kde=True)
+plt.title('Распределение предсказанных значений')
+plt.xlabel('Предсказанные значения')
+plt.ylabel('Частота')
+plt.show()
+
+# 9.4 ROC-кривая (для бинарной классификации)
+if len(np.unique(y)) == 2:
+    y_val_prob = model.predict_proba(X_val)[:, 1]
+    fpr, tpr, _ = roc_curve(y_val, y_val_prob)
+    roc_auc = auc(fpr, tpr)
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(fpr, tpr, color='blue', lw=2, label=f'ROC-кривая (area = {roc_auc:.2f})')
+    plt.plot([0, 1], [0, 1], color='red', lw=2, linestyle='--')
+    plt.title('ROC-кривая')
+    plt.xlabel('Ложноположительная доля')
+    plt.ylabel('Истинноположительная доля')
+    plt.legend(loc='lower right')
+    plt.show()
+
+# 10. Вводим признаки для классификации
+input_features = input("Введите признаки для классификации, разделенные запятыми: ").split(',')
+try:
+    input_features = [float(i) for i in input_features]  # Преобразуем в числовой формат
+except ValueError:
+    print("Ошибка: убедитесь, что все введенные признаки являются числовыми.")
+    exit()
+
+# 11. Масштабируем введенные признаки
+input_features_scaled = scaler.transform(pd.DataFrame([input_features]))
+
+# 12. Прогнозируем класс на основе введенных признаков
+predicted_class = model.predict(input_features_scaled)[0]  # Предсказанное значение
+
+# 13. Выводим предсказанное значение
+print(f"Предсказанный класс на введенных признаках: {predicted_class}")

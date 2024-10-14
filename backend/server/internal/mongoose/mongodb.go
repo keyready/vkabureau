@@ -33,5 +33,32 @@ func MongoConnect() (mongoDB *mongo.Database) {
 			Options: options.Index().SetUnique(true),
 		})
 
+	recoveryQuestions := []string{
+		"Как зовут вашего лучшего друга/подругу детства?",
+		"В каком городе вы впервые встретили своего супруга/супругу?",
+		"Как называлась ваша первая школа?",
+		"Какой была ваша первая работа?",
+		"Какой у вас был первый мобильный телефон?",
+		"Какое имя вы дали своему первому питомцу?",
+		"Какую книгу вы прочитали первой в детстве?",
+		"Какое прозвище вам дали в школе?",
+		"Какую песню вы слушали чаще всего в подростковом возрасте?",
+		"Как назывался ваш любимый ресторан/кафе, когда вы были подростком?",
+	}
+
+	for _, question := range recoveryQuestions {
+		mongoClient.Database("vkalance").
+			Collection("recovery_questions").
+			UpdateOne(
+				context.TODO(),
+				bson.M{"question": question},
+				bson.M{
+					"$setOnInsert": bson.M{
+						"question": question,
+					},
+				},
+				options.Update().SetUpsert(true),
+			)
+	}
 	return mongoClient.Database("vkalance")
 }

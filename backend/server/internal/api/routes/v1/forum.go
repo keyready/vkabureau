@@ -12,6 +12,8 @@ func NewForumRoutes(r *gin.Engine, fc *controllers.ForumController) {
 	forumRoutes.Use(middleware.SessionValidate())
 
 	forumRoutes.GET("", fc.MyForums)
+	forumRoutes.GET("/:forumId", fc.FetchOneForum)
 	forumRoutes.POST("/message/send", fc.SendMessage)
+	forumRoutes.GET("/messenger/:forumId", fc.FetchAllMessages)
 
 }

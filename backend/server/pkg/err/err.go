@@ -24,6 +24,6 @@ func ErrorHandler(c *gin.Context, currentError error) {
 
 	default:
 		color.New(color.FgCyan).Println("Unknown Error:", err.Error())
-		c.AbortWithStatusJSON(http.StatusBadGateway, gin.H{"Unknown Error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Unknown Error": err.Error()})
 	}
 }

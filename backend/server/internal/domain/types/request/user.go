@@ -1,6 +1,9 @@
 package request
 
-import "time"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type SignUp struct {
 	Login    string `json:"login" binding:"required" bson:"login"`
@@ -24,7 +27,8 @@ type Login struct {
 }
 
 type ChangeProfile struct {
-	Login string `json:"login" binding:"required" bson:"login"`
+	ID    primitive.ObjectID `json:"id" bson:"_id"`
+	Login string             `json:"login" binding:"required" bson:"login"`
 
 	Firstname  string `json:"firstname" bson:"firstname"`
 	Middlename string `json:"middlename" bson:"middlename"`

@@ -10,12 +10,14 @@ import (
 	"server/internal/domain/types/dto"
 	"server/internal/domain/types/models"
 	"server/internal/domain/types/request"
+	"time"
 )
 
 type ForumRepository interface {
 	SendMessage(sendMessage request.SendMessage) (httpCode int, err error)
 	FetchAllMessages(forumIdString string) (httpCode int, err error, messages []dto.MessageData)
 	MyForums(me string) (httpCode int, err error, forums []models.Forum)
+	FetchOneForum(forumId primitive.ObjectID) (httpCode int, err error, forum models.Forum)
 }
 
 type ForumRepositoryImpl struct {
@@ -24,6 +26,18 @@ type ForumRepositoryImpl struct {
 
 func NewForum(mongoDB *mongo.Database) *ForumRepositoryImpl {
 	return &ForumRepositoryImpl{mongoDB: mongoDB}
+}
+
+func (f ForumRepositoryImpl) FetchOneForum(forumId primitive.ObjectID) (httpCode int, err error, forum models.Forum) {
+	mongoErr := f.mongoDB.Collection("forums").
+		FindOne(
+			context.Background(),
+			bson.M{"_id": forumId},
+		).Decode(&forum)
+	if mongoErr != nil {
+		return http.StatusNotFound, fmt.Errorf("Форум %s не найден", forumId), forum
+	}
+	return http.StatusOK, nil, forum
 }
 
 func (f ForumRepositoryImpl) MyForums(me string) (httpCode int, err error, forums []models.Forum) {
@@ -38,39 +52,39 @@ func (f ForumRepositoryImpl) MyForums(me string) (httpCode int, err error, forum
 			context.Background(),
 			bson.M{
 				"membersId": bson.M{
-					"$in": []primitive.ObjectID{member.ID},
+					"$elemMatch": bson.M{
+						"$eq": member.ID,
+					},
 				},
 			},
 		)
-	defer cursor.Close(context.Background())
+	defer cursor.Close(context.TODO())
 	if mongoErr != nil {
 		return http.StatusInternalServerError, fmt.Errorf("Не извлек форумы, в которых %s участник: %s", me, mongoErr), forums
 	}
 
-	if cursor.Next(context.Background()) {
-		var forum models.Forum
-		cursorErr := cursor.Decode(&forum)
-		if cursorErr != nil {
-			return http.StatusInternalServerError, fmt.Errorf("Ошибка при декоде одного форума %s", cursorErr), forums
-		}
-		forums = append(forums, forum)
+	if cursorErr := cursor.All(context.TODO(), &forums); cursorErr != nil {
+		return http.StatusInternalServerError, fmt.Errorf("Не декодировал все форумы %s", cursorErr.Error()), forums
 	}
 
 	return http.StatusOK, nil, forums
 }
 
 func (f ForumRepositoryImpl) SendMessage(sendMessage request.SendMessage) (httpCode int, err error) {
+	forumId, _ := primitive.ObjectIDFromHex(sendMessage.ForumId)
+	sendMessage.CreatedAt = time.Now()
+
 	_, mongoErr := f.mongoDB.Collection("forums").
 		UpdateOne(
 			context.TODO(),
-			bson.M{"_id": sendMessage.ForumId},
+			bson.M{"_id": forumId},
 			bson.M{
 				"$push": bson.M{
 					"messages": bson.M{
-						"author":          sendMessage.Message.Author,
-						"body":            sendMessage.Message.Body,
-						"attachmentsName": sendMessage.Message.AttachmentsName,
-						"createdAt":       sendMessage.Message.CreatedAt,
+						"author":          sendMessage.Author,
+						"body":            sendMessage.Body,
+						"attachmentsName": sendMessage.AttachmentsName,
+						"createdAt":       sendMessage.CreatedAt,
 					},
 				},
 			},
@@ -78,7 +92,6 @@ func (f ForumRepositoryImpl) SendMessage(sendMessage request.SendMessage) (httpC
 	if mongoErr != nil {
 		return httpCode, fmt.Errorf("Ошибка отправки сообщения: %s", mongoErr.Error())
 	}
-
 	return http.StatusOK, nil
 }
 
