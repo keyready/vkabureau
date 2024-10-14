@@ -7,7 +7,7 @@ import { fileTypeMap } from '../../lib/const';
 import classes from './AttachmentPreview.module.scss';
 
 import { classNames } from '@/shared/lib/classNames';
-import { HStack } from '@/shared/ui/Stack';
+import { VStack } from '@/shared/ui/Stack';
 
 interface AttachmentPreviewProps {
     className?: string;
@@ -36,8 +36,8 @@ export const AttachmentPreview = (props: AttachmentPreviewProps) => {
             <>
                 <Image
                     onClick={() => setIsModalOpened(true)}
-                    width={92}
-                    height={92}
+                    width={64}
+                    height={64}
                     classNames={{
                         wrapper: classes.attachedFilePreview,
                     }}
@@ -70,21 +70,24 @@ export const AttachmentPreview = (props: AttachmentPreviewProps) => {
     }
 
     return (
-        <HStack
-            maxW
-            justify="center"
-            align="center"
-            className={classNames('bg-input-hover-bg rounded-md p-4', {}, [className])}
+        <a
+            aria-label="Download attachment"
+            download
+            target="_blank"
+            href={`https://storage.yandexcloud.net/vkahub-storage/${attachment}`}
+            rel="noreferrer"
         >
-            <a
-                aria-label="Download attachment"
-                download
-                target="_blank"
-                href={`https://storage.yandexcloud.net/vkahub-storage/${attachment}`}
-                rel="noreferrer"
+            <VStack
+                maxW
+                justify="center"
+                align="center"
+                className={classNames('bg-input-hover-bg rounded-md p-4', {}, [className])}
             >
-                <RiFile3Line size={60} />
-            </a>
-        </HStack>
+                <RiFile3Line size={32} className="text-primary" />
+            </VStack>
+            <p className="w-full text-center text-white text-xs">
+                .{attachment.split('.')[1].toUpperCase()}
+            </p>
+        </a>
     );
 };

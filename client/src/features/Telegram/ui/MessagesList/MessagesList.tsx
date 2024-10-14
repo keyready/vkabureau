@@ -51,7 +51,6 @@ export const MessagesList = (props: MessagesListProps) => {
                 className,
             ])}
         >
-            {/* @ts-ignore */}
             {forum?.messages.map((message, index) => (
                 <Message key={index} message={message} />
             ))}
