@@ -13,6 +13,7 @@ import { ProjectSchema } from '@/entities/Project';
 import { TaskSchema } from '@/entities/Task';
 import { ProfileSchema } from '@/entities/Profile';
 import { ForumSchema } from '@/entities/Forum';
+import { StatisticsSchema } from '@/entities/Statistics';
 
 export interface StateSchema {
     user: UserSchema;
@@ -23,6 +24,7 @@ export interface StateSchema {
     project?: ProjectSchema;
     task?: TaskSchema;
     forum?: ForumSchema;
+    statistics?: StatisticsSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;
