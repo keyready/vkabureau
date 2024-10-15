@@ -6,7 +6,7 @@ import { Forum } from '../../model/types/Forum';
 
 import classes from './ForumCard.module.scss';
 
-import { classNames } from '@/shared/lib/classNames';
+import { classNames, Mods } from '@/shared/lib/classNames';
 import { HStack, VStack } from '@/shared/ui/Stack';
 import { normalizeWordForm } from '@/shared/lib/normalizeWordForm';
 import { RoutePath } from '@/shared/config/routeConfig';
@@ -35,12 +35,16 @@ export const ForumCard = (props: ForumCardProps) => {
         [forum?.messages?.length],
     );
 
+    const mods: Mods = {
+        'self-end p-2 w-11/12': forum.title.includes('задачи'),
+    };
+
     return (
         <VStack
             onClick={handleCardClick}
             gap="12px"
             maxW
-            className={classNames(classes.ForumCard, {}, [className])}
+            className={classNames(classes.ForumCard, mods, [className])}
         >
             <HStack justify="between" maxW>
                 <h1 className="text-xl">{forum.title}</h1>

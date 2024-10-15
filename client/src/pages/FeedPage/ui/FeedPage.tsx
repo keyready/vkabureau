@@ -7,6 +7,8 @@ import { Page } from '@/widgets/Page';
 import { ProfileBlock } from '@/entities/Profile';
 import { PageTitle } from '@/shared/ui/PageTitle';
 import { MyProjectsList } from '@/entities/Project';
+import { OwnTasksList } from '@/entities/Task';
+import { VStack } from '@/shared/ui/Stack';
 
 interface FeedPageProps {
     className?: string;
@@ -30,7 +32,10 @@ const FeedPage = memo((props: FeedPageProps) => {
                 )}
             >
                 <ProfileBlock className="col-span-3" />
-                <MyProjectsList className="col-span-2" />
+                <VStack maxH className="col-span-2">
+                    <MyProjectsList />
+                    <OwnTasksList />
+                </VStack>
             </div>
         </Page>
     );

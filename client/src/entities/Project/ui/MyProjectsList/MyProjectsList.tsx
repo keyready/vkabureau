@@ -31,7 +31,7 @@ export const MyProjectsList = (props: MyProjectsListProps) => {
                 flexGrow
                 maxW
                 className={classNames(
-                    'flex-grow self-stretch h-full border-2 border-primary rounded-xl p-4',
+                    'flex-grow self-stretch h-full border-1 border-primary rounded-xl p-4',
                     {},
                     [className],
                 )}
@@ -48,7 +48,7 @@ export const MyProjectsList = (props: MyProjectsListProps) => {
                 flexGrow
                 maxW
                 className={classNames(
-                    'flex-grow self-stretch h-full border-2 border-primary rounded-xl p-4',
+                    'flex-grow self-stretch h-full border-1 border-primary rounded-xl p-4',
                     {},
                     [className],
                 )}
@@ -62,7 +62,7 @@ export const MyProjectsList = (props: MyProjectsListProps) => {
         <VStack
             flexGrow
             className={classNames(
-                'flex-grow self-stretch h-full border-2 border-primary rounded-xl p-4',
+                'flex-grow self-stretch h-full border-1 border-primary rounded-xl p-4',
                 {},
                 [className],
             )}

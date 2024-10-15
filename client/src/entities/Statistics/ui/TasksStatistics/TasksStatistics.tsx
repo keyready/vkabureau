@@ -24,7 +24,7 @@ const initialDta = {
     datasets: [
         {
             label: 'Задачи',
-            data: [0, 0, 0],
+            data: [23, 43, 12],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(255, 206, 86, 0.2)',
@@ -66,9 +66,9 @@ export const TasksStatistics = (props: TasksStatisticsProps) => {
                     {
                         label: 'Задачи',
                         data: [
-                            tasksStatistics.criticalTasks,
-                            tasksStatistics.mediumTasks,
-                            tasksStatistics.featureTasks,
+                            tasksStatistics.criticalTasks || 0,
+                            tasksStatistics.mediumTasks || 0,
+                            tasksStatistics.featureTasks || 0,
                         ],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
