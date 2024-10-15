@@ -4,11 +4,14 @@ import { UserSchema } from '../types/UserSchema';
 import { signupUser } from '../services/authServices/signupUser';
 import { loginUser } from '../services/authServices/loginUser';
 import { inviteMember } from '../services/otherServices/inviteMember';
+import { getControlQuestions } from '../services/authServices/getControlQuestions';
+import { ControlQuestions } from '../types/User';
 
 import { USER_LOCALSTORAGE_KEY } from '@/shared/const';
 
 const initialState: UserSchema = {
     data: undefined,
+    questions: undefined,
     isLoading: false,
     error: undefined,
 };
@@ -60,6 +63,22 @@ export const UserSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(loginUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(getControlQuestions.pending, (state) => {
+                state.error = undefined;
+                state.isLoading = true;
+            })
+            .addCase(
+                getControlQuestions.fulfilled,
+                (state, action: PayloadAction<ControlQuestions[]>) => {
+                    state.isLoading = false;
+                    state.questions = action.payload;
+                },
+            )
+            .addCase(getControlQuestions.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
             });

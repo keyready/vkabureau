@@ -44,7 +44,7 @@ export const AvatarDropdown = (props: AvatarDropdownProps) => {
 
                 <SidebarModal
                     classNames={{
-                        contentWrapper: 'p-4',
+                        contentWrapper: 'p-4 overflow-y-auto',
                     }}
                     isOpened={isOpened}
                     setIsOpened={setIsOpened}

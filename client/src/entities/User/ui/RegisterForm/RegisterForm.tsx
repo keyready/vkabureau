@@ -1,14 +1,25 @@
-import { FormEvent, useCallback, useMemo, useState } from 'react';
-import { Autocomplete, AutocompleteItem, Button, Divider, Input } from '@nextui-org/react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+    Autocomplete,
+    AutocompleteItem,
+    Button,
+    Divider,
+    DropdownItem,
+    Input,
+} from '@nextui-org/react';
 import { useSelector } from 'react-redux';
 import { RiEyeLine, RiEyeOffLine } from '@remixicon/react';
+
+import { RegisterUser } from '../../model/types/User';
+import { signupUser } from '../../model/services/authServices/signupUser';
+import { getUserIsLoading, getUserQuestions } from '../../model/selectors/UserSelectors';
+import { getControlQuestions } from '../../model/services/authServices/getControlQuestions';
 
 import classes from './RegisterForm.module.scss';
 
 import { classNames } from '@/shared/lib/classNames';
 import { VStack } from '@/shared/ui/Stack';
-import { getUserIsLoading, RegisterUser, signupUser } from '@/entities/User';
-import { ProfileRank, RenderedRanks } from '@/entities/Profile/model/types/Profile';
+import { ProfileRank, RenderedRanks } from '@/entities/Profile';
 import { toastDispatch } from '@/widgets/Toaster';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 
@@ -20,12 +31,17 @@ export const RegisterForm = (props: RegisterFormProps) => {
     const { className } = props;
 
     const isUserLoading = useSelector(getUserIsLoading);
+    const controlQuestions = useSelector(getUserQuestions);
 
     const [newUserForm, setNewUserForm] = useState<Partial<RegisterUser>>({});
     const [repeatedPassword, setRepeatedPassword] = useState<string>('');
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(getControlQuestions());
+    }, [dispatch]);
 
     const isPasswordsEqual = useMemo(
         () => newUserForm.password === repeatedPassword,
@@ -40,9 +56,13 @@ export const RegisterForm = (props: RegisterFormProps) => {
             !newUserForm.lastname ||
             !newUserForm.firstname ||
             !newUserForm.middlename ||
+            !newUserForm.controlAnswer ||
+            !newUserForm.controlQuestion ||
             !newUserForm.login ||
             !isPasswordsEqual,
         [
+            !newUserForm.controlAnswer,
+            !newUserForm.controlQuestion,
             isPasswordsEqual,
             isUserLoading,
             newUserForm.division,
@@ -58,11 +78,29 @@ export const RegisterForm = (props: RegisterFormProps) => {
         async (event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
 
-            await toastDispatch(dispatch(signupUser(newUserForm)), {
-                loading: 'Регистрируем...',
-                success: 'Вы успешно зарегистрированы',
-                error: 'Попробуйте по-другому',
-            });
+            const recoveryBlock = {
+                controlQuestion: newUserForm.controlQuestion,
+                controlAnswer: newUserForm.controlAnswer,
+            };
+
+            const copyNewUSerForm = { ...newUserForm };
+            delete copyNewUSerForm.controlQuestion;
+            delete copyNewUSerForm.controlAnswer;
+
+            await toastDispatch(
+                dispatch(
+                    signupUser({
+                        ...copyNewUSerForm,
+                        // @ts-ignore
+                        recoveryBlock,
+                    }),
+                ),
+                {
+                    loading: 'Регистрируем...',
+                    success: 'Вы успешно зарегистрированы',
+                    error: 'Попробуйте по-другому',
+                },
+            );
         },
         [dispatch, newUserForm],
     );
@@ -70,7 +108,7 @@ export const RegisterForm = (props: RegisterFormProps) => {
     return (
         <VStack maxW className={classNames(classes.RegisterForm, {}, [className])}>
             <form onSubmit={handleFormSubmit}>
-                <VStack gap="16px" align="stretch" justify="start">
+                <VStack className="overflow-y-auto" gap="16px" align="stretch" justify="start">
                     <Input
                         value={newUserForm.login}
                         onChange={(event) =>
@@ -210,6 +248,33 @@ export const RegisterForm = (props: RegisterFormProps) => {
                         isRequired
                         isDisabled={isUserLoading}
                         label="Подразделение"
+                    />
+
+                    <Divider />
+                    <Autocomplete
+                        label="Контрольный вопрос"
+                        isRequired
+                        items={controlQuestions || []}
+                        onSelectionChange={(event) =>
+                            setNewUserForm({
+                                ...newUserForm,
+                                controlQuestion: event as string,
+                            })
+                        }
+                        value={newUserForm.controlQuestion}
+                    >
+                        {(item) => <DropdownItem key={item.id}>{item.question}</DropdownItem>}
+                    </Autocomplete>
+                    <Input
+                        onChange={(event) =>
+                            setNewUserForm({
+                                ...newUserForm,
+                                controlAnswer: event.target.value,
+                            })
+                        }
+                        value={newUserForm.controlAnswer}
+                        label="Ответ на вопрос"
+                        isRequired
                     />
 
                     <Button

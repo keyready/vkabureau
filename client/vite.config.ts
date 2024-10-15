@@ -20,7 +20,7 @@ export default defineConfig({
             '/api': {
                 // target: 'http://25.15.27.124:5000/api',
                 // target: 'http://localhost:5000',
-                target: 'http://192.168.0.100:5000/api',
+                target: 'http://192.168.0.101:5000/api',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api\//, ''),
             },
