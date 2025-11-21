@@ -58,7 +58,7 @@ export const AttachmentPreview = (props: AttachmentPreviewProps) => {
                             classNames={{
                                 wrapper: classes.imagePreview,
                             }}
-                            src={`https://storage.yandexcloud.net/vkahub-storage/${attachment}`}
+                            src={`/attachments/${attachment}`}
                             fallbackSrc="/static/image-unavailable.webp"
                             alt={attachment}
                             className="rounded-md"
@@ -74,7 +74,7 @@ export const AttachmentPreview = (props: AttachmentPreviewProps) => {
             aria-label="Download attachment"
             download
             target="_blank"
-            href={`https://storage.yandexcloud.net/vkahub-storage/${attachment}`}
+            href={`/documents/${attachment}`}
             rel="noreferrer"
         >
             <VStack
