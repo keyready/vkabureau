@@ -12,6 +12,7 @@ func NewUserRoutes(r *gin.Engine, uc *controllers.UserController) {
 	{
 		userRoutes.POST("/sign-up", uc.SignUp)
 		userRoutes.POST("/login", uc.Login)
+		userRoutes.GET("/recoveryQuestions", uc.GetRecoveryQuestions)
 		userRoutes.GET("/profile/:login", middleware.SessionValidate(), uc.Profile)
 		userRoutes.GET("/userData", middleware.SessionValidate(), uc.UserData)
 		userRoutes.PUT("/change", middleware.SessionValidate(), uc.ChangeProfile)

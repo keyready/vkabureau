@@ -1,13 +1,19 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"fmt"
+	"path/filepath"
 	"server/internal/domain/types/e"
 	"server/internal/domain/types/request"
 	"server/internal/domain/usecase"
 	"server/pkg/err"
-	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+)
+
+const (
+	DOCUMENTS_STORAGE = "/app/static/documents"
 )
 
 type ProjectController struct {
@@ -66,28 +72,41 @@ func (pc *ProjectController) FetchAllProjects(ctx *gin.Context) {
 }
 
 func (pc *ProjectController) CreateProject(ctx *gin.Context) {
-	var createProject request.CreateProject
-	createProject.Author = ctx.GetString("login")
+	formData := request.CreateProject{}
 
-	if bindErr := ctx.ShouldBind(&createProject); bindErr != nil {
-		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
+	multipartForm, mpfdErr := ctx.MultipartForm()
+	if mpfdErr != nil {
+		err.ErrorHandler(
+			ctx,
+			&e.ValidationError{
+				Message: mpfdErr.Error(),
+			},
+		)
 	}
 
-	for _, doc := range createProject.Documents {
-		extFile := strings.Split(doc.Filename, ".")[len(strings.Split(doc.Filename, "."))-1]
-		doc.Filename = uuid.New().String() + "." + extFile
-		createProject.DocumentsNames = append(createProject.DocumentsNames, doc.Filename)
-		//TODO - сохранение документов к проекту
-		//savePath := fmt.Sprintf("/app/static/documents/%s", doc.Filename)
-		//uploadErr := ctx.SaveUploadedFile(doc, savePath)
-		//if uploadErr != nil {
-		//	err.ErrorHandler(ctx, &e.ServerError{Message: uploadErr.Error()})
-		//}
+	if bindErr := ctx.ShouldBind(&formData); bindErr != nil {
+		err.ErrorHandler(
+			ctx,
+			&e.ValidationError{Message: bindErr.Error()},
+		)
 	}
 
-	createProject.Author = ctx.GetString("login")
+	documentNames := []string{}
+	for _, doc := range multipartForm.File["documents"] {
+		doc.Filename = fmt.Sprintf("%s.%s", uuid.NewString(), filepath.Ext(doc.Filename))
+		if uploadErr := ctx.SaveUploadedFile(
+			doc,
+			fmt.Sprintf("%s/%s", DOCUMENTS_STORAGE, doc.Filename),
+		); uploadErr != nil {
+			err.ErrorHandler(ctx, &e.ServerError{Message: uploadErr.Error()})
+		}
 
-	httpCode, usecaseErr := pc.projectUsecase.CreateProject(createProject)
+		documentNames = append(documentNames, doc.Filename)
+	}
+
+	formData.Author = ctx.GetString("login")
+
+	httpCode, usecaseErr := pc.projectUsecase.CreateProject(formData, documentNames)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
 	}

@@ -1,15 +1,9 @@
 package request
 
-import (
-	"mime/multipart"
-)
-
 type CreateProject struct {
-	Title          string                  `form:"title"`
-	Description    string                  `form:"description"`
-	Documents      []*multipart.FileHeader `form:"documents"`
-	DocumentsNames []string
-	Author         string
+	Title       string `form:"title"`
+	Description string `form:"description"`
+	Author      string
 }
 
 type UpdateProject struct {

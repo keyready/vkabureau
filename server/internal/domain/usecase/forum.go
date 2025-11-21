@@ -1,16 +1,16 @@
 package usecase
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"server/internal/domain/repository"
 	"server/internal/domain/types/dto"
 	"server/internal/domain/types/models"
 	"server/internal/domain/types/request"
-	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ForumUsecase interface {
-	SendMessage(sendMessage request.SendMessage) (httpCode int, err error)
+	SendMessage(sendMessage request.SendMessage, attachNames []string) (httpCode int, err error)
 	FetchAllMessages(forumIdString string) (httpCode int, err error, messages []dto.MessageData)
 	MyForums(me string) (httpCode int, err error, forums []models.Forum)
 	FetchOneForum(forumIdString string) (httpCode int, err error, forum models.Forum)
@@ -49,9 +49,8 @@ func (f ForumUsecaseImpl) FetchAllMessages(forumIdString string) (httpCode int, 
 	return httpCode, nil, messages
 }
 
-func (f ForumUsecaseImpl) SendMessage(sendMessage request.SendMessage) (httpCode int, err error) {
-	sendMessage.CreatedAt = time.Now()
-	httpCode, err = f.forumRepo.SendMessage(sendMessage)
+func (f ForumUsecaseImpl) SendMessage(sendMessage request.SendMessage, attachNames []string) (httpCode int, err error) {
+	httpCode, err = f.forumRepo.SendMessage(sendMessage, attachNames)
 	if err != nil {
 		return httpCode, err
 	}

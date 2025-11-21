@@ -1,14 +1,15 @@
 package usecase
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"server/internal/domain/repository"
 	"server/internal/domain/types/request"
 	"server/internal/domain/types/response"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ProjectUsecase interface {
-	CreateProject(createProject request.CreateProject) (httpCode int, err error)
+	CreateProject(createProject request.CreateProject, documentNames []string) (httpCode int, err error)
 	UpdateProject(updateProject request.UpdateProject) (httpCode int, err error)
 	FetchProject(projectId string) (httpCode int, err error, project response.ProjectData)
 	FetchAllProjects() (httpCode int, err error, projects []response.ProjectData)
@@ -69,8 +70,8 @@ func (p ProjectUsecaseImpl) UpdateProject(updateProject request.UpdateProject) (
 	return httpCode, nil
 }
 
-func (p ProjectUsecaseImpl) CreateProject(createProject request.CreateProject) (httpCode int, err error) {
-	httpCode, err = p.projectRepo.CreateProject(createProject)
+func (p ProjectUsecaseImpl) CreateProject(createProject request.CreateProject, documentNames []string) (httpCode int, err error) {
+	httpCode, err = p.projectRepo.CreateProject(createProject, documentNames)
 	if err != nil {
 		return httpCode, err
 	}
