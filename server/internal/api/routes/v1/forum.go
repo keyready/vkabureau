@@ -9,9 +9,7 @@ import (
 
 func NewForumRoutes(r *gin.Engine, fc *controllers.ForumController) {
 	forumRoutes := r.Group("/api/forums")
-
 	forumRoutes.Use(middleware.SessionValidate())
-
 	{
 		forumRoutes.GET("", fc.MyForums)
 		forumRoutes.GET("/:forumId", fc.FetchOneForum)

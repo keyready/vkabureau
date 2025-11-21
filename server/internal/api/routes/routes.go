@@ -1,16 +1,20 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
 	"server/internal/api/controllers"
 	v1 "server/internal/api/routes/v1"
 	"server/internal/domain/repository"
 	"server/internal/domain/usecase"
+
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func InitRoutes(mongodb *mongo.Database) *gin.Engine {
 	r := gin.New()
+
+	r.Use(gin.LoggerWithFormatter(LocalLogger))
+	r.Use(gin.Recovery())
 
 	ur := repository.NewUserRepositoryImpl(mongodb)
 	uu := usecase.NewUserUsecaseImpl(ur)
