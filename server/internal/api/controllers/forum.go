@@ -78,7 +78,7 @@ func (f *ForumController) SendMessage(ctx *gin.Context) {
 	attachNames := []string{}
 	for _, img := range multipartForm.File["attachments"] {
 		fileName := fmt.Sprintf(
-			"%s.%s",
+			"%s%s",
 			uuid.NewString(),
 			filepath.Ext(img.Filename),
 		)
