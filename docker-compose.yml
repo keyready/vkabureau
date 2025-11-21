@@ -6,6 +6,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - 2869:2869
+    volumes:
+      - ./server/documents:/app/static/documents
+      - ./server/messages:/app/static/messages
     depends_on:
       - mongodb
     networks:

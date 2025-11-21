@@ -2,14 +2,18 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"path/filepath"
 	"server/internal/domain/types/e"
 	"server/internal/domain/types/request"
 	"server/internal/domain/usecase"
 	"server/pkg/err"
-	"strings"
-	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+)
+
+const (
+	ATTACH_STORAGE = "/app/static/messages"
 )
 
 type ForumController struct {
@@ -54,30 +58,41 @@ func (f *ForumController) MyForums(ctx *gin.Context) {
 }
 
 func (f *ForumController) SendMessage(ctx *gin.Context) {
-	var sendMessage request.SendMessage
+	formData := request.SendMessage{}
 
-	bindErr := ctx.ShouldBind(&sendMessage)
-	if bindErr != nil {
+	if bindErr := ctx.ShouldBind(&formData); bindErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
 	}
 
-	sendMessage.Author = ctx.GetString("login")
-	sendMessage.CreatedAt = time.Now()
+	multipartForm, mpfdErr := ctx.MultipartForm()
+	if mpfdErr != nil {
+		err.ErrorHandler(
+			ctx,
+			&e.ValidationError{
+				Message: mpfdErr.Error(),
+			},
+		)
+	}
+	formData.Author = ctx.GetString("login")
 
-	for _, img := range sendMessage.Attachments {
-		img.Filename = fmt.Sprintf(
+	attachNames := []string{}
+	for _, img := range multipartForm.File["attachments"] {
+		fileName := fmt.Sprintf(
 			"%s.%s",
 			uuid.NewString(),
-			strings.Split(img.Filename, ".")[len(strings.Split(img.Filename, "."))-1],
+			filepath.Ext(img.Filename),
 		)
-		sendMessage.AttachmentsName = append(sendMessage.AttachmentsName, img.Filename)
-		savePath := fmt.Sprintf("/app/static/messages/%s", img.Filename)
+		img.Filename = fileName
+
+		savePath := fmt.Sprintf("%s/%s", ATTACH_STORAGE, img.Filename)
 		if uploadErr := ctx.SaveUploadedFile(img, savePath); uploadErr != nil {
 			err.ErrorHandler(ctx, &e.ServerError{Message: uploadErr.Error()})
 		}
+
+		attachNames = append(attachNames, fileName)
 	}
 
-	httpCode, usecaseErr := f.forumUsecase.SendMessage(sendMessage)
+	httpCode, usecaseErr := f.forumUsecase.SendMessage(formData, attachNames)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
 	}

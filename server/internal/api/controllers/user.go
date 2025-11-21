@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"server/internal/domain/types/e"
 	"server/internal/domain/types/request"
 	"server/internal/domain/usecase"
 	"server/pkg/err"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
@@ -54,12 +55,12 @@ func (uc *UserController) Profile(ctx *gin.Context) {
 }
 
 func (uc *UserController) SignUp(ctx *gin.Context) {
-	var signUp request.SignUp
-	if bindErr := ctx.ShouldBindJSON(&signUp); bindErr != nil {
+	jsonForm := request.SignUp{}
+	if bindErr := ctx.ShouldBindJSON(&jsonForm); bindErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
 	}
 
-	httpCode, usecaseErr := uc.userUsecase.SignUp(signUp)
+	httpCode, usecaseErr := uc.userUsecase.SignUp(jsonForm)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
 	}
@@ -79,4 +80,9 @@ func (uc *UserController) Login(ctx *gin.Context) {
 	}
 
 	ctx.JSON(httpCode, loginResponse)
+}
+
+func (uc *UserController) GetRecoveryQuestions(gCtx *gin.Context) {
+	httpCode, _, questions := uc.userUsecase.FetchAllQuestions()
+	gCtx.JSON(httpCode, questions)
 }

@@ -3,18 +3,19 @@ package repository
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"server/internal/domain/types/dto"
 	"server/internal/domain/types/models"
 	"server/internal/domain/types/request"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ForumRepository interface {
-	SendMessage(sendMessage request.SendMessage) (httpCode int, err error)
+	SendMessage(sendMessage request.SendMessage, attachNames []string) (httpCode int, err error)
 	FetchAllMessages(forumIdString string) (httpCode int, err error, messages []dto.MessageData)
 	MyForums(me string) (httpCode int, err error, forums []models.Forum)
 	FetchOneForum(forumId primitive.ObjectID) (httpCode int, err error, forum models.Forum)
@@ -70,9 +71,8 @@ func (f ForumRepositoryImpl) MyForums(me string) (httpCode int, err error, forum
 	return http.StatusOK, nil, forums
 }
 
-func (f ForumRepositoryImpl) SendMessage(sendMessage request.SendMessage) (httpCode int, err error) {
+func (f ForumRepositoryImpl) SendMessage(sendMessage request.SendMessage, attachNames []string) (httpCode int, err error) {
 	forumId, _ := primitive.ObjectIDFromHex(sendMessage.ForumId)
-	sendMessage.CreatedAt = time.Now()
 
 	_, mongoErr := f.mongoDB.Collection("forums").
 		UpdateOne(
@@ -83,8 +83,8 @@ func (f ForumRepositoryImpl) SendMessage(sendMessage request.SendMessage) (httpC
 					"messages": bson.M{
 						"author":          sendMessage.Author,
 						"body":            sendMessage.Body,
-						"attachmentsName": sendMessage.AttachmentsName,
-						"createdAt":       sendMessage.CreatedAt,
+						"attachmentsName": attachNames,
+						"createdAt":       time.Now(),
 					},
 				},
 			},

@@ -3,9 +3,6 @@ package repository
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"server/internal/domain/types/dto"
 	"server/internal/domain/types/enum"
@@ -13,10 +10,14 @@ import (
 	"server/internal/domain/types/request"
 	"server/internal/domain/types/response"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ProjectRepository interface {
-	CreateProject(createProject request.CreateProject) (httpCode int, err error)
+	CreateProject(createProject request.CreateProject, documentNames []string) (httpCode int, err error)
 	UpdateProject(updateProject request.UpdateProject) (httpCode int, err error)
 	FetchProject(projectId primitive.ObjectID) (httpCode int, err error, project response.ProjectData)
 	FetchAllProjects() (httpCode int, err error, projects []response.ProjectData)
@@ -242,7 +243,7 @@ func (p ProjectRepositoryImpl) UpdateProject(updateProject request.UpdateProject
 	return http.StatusOK, nil
 }
 
-func (p ProjectRepositoryImpl) CreateProject(createProject request.CreateProject) (httpCode int, err error) {
+func (p ProjectRepositoryImpl) CreateProject(createProject request.CreateProject, documentNames []string) (httpCode int, err error) {
 	var author models.User
 	err = p.mongoDB.
 		Collection("users").
@@ -257,7 +258,7 @@ func (p ProjectRepositoryImpl) CreateProject(createProject request.CreateProject
 		InsertOne(context.Background(), &models.Project{
 			Title:       createProject.Title,
 			Description: createProject.Description,
-			Documents:   createProject.DocumentsNames,
+			Documents:   documentNames,
 			Tasks:       []primitive.ObjectID{},
 			Likes: dto.LikeData{
 				Value:       0,
