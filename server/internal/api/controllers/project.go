@@ -93,7 +93,7 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 
 	documentNames := []string{}
 	for _, doc := range multipartForm.File["documents"] {
-		doc.Filename = fmt.Sprintf("%s.%s", uuid.NewString(), filepath.Ext(doc.Filename))
+		doc.Filename = fmt.Sprintf("%s%s", uuid.NewString(), filepath.Ext(doc.Filename))
 		if uploadErr := ctx.SaveUploadedFile(
 			doc,
 			fmt.Sprintf("%s/%s", DOCUMENTS_STORAGE, doc.Filename),
