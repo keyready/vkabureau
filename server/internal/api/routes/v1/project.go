@@ -21,7 +21,6 @@ func NewProjectRoutes(
 		projectRoutes.PUT("/:projectId/change", pc.ChangeProject)
 		projectRoutes.GET("", pc.FetchAllProjects)
 		projectRoutes.POST("/create", pc.CreateProject)
-		projectRoutes.PUT("/:projectId/change", pc.ChangeProject)
 		projectRoutes.GET("/own", pc.OwnProject)
 		projectRoutes.POST("/like", pc.LikeProject)
 	}
