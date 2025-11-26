@@ -5,6 +5,9 @@ import { Button } from '@nextui-org/react';
 import { useSelector } from 'react-redux';
 
 import { Project } from '../../model/types/Project';
+import { changeLikeStatus } from '../../model/service/changeLikeStatus';
+import { useProjects } from '../../api/ProjectsApi';
+import { getProjectLikeIsSending } from '../../model/selectors/ProjectSelectors';
 
 import classes from './ProjectPreviewCard.module.scss';
 
@@ -13,9 +16,6 @@ import { HStack, VStack } from '@/shared/ui/Stack';
 import { RoutePath } from '@/shared/config/routeConfig';
 import { getProfileData } from '@/entities/Profile';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
-import { changeLikeStatus } from '@/entities/Project/model/service/changeLikeStatus';
-import { useProjects } from '@/entities/Project/api/ProjectsApi';
-import { getProjectLikeIsSending } from '@/entities/Project/model/selectors/ProjectSelectors';
 
 interface ProjectPreviewCardProps {
     className?: string;
@@ -71,7 +71,6 @@ export const ProjectPreviewCard = (props: ProjectPreviewCardProps) => {
             onClick={handleCardClick}
             role="link"
             gap="12px"
-            maxW
             justify="between"
             className={classNames(classes.ProjectPreviewCard, {}, [className])}
         >
