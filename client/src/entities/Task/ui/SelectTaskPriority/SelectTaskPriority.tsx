@@ -72,6 +72,7 @@ export const SelectTaskPriority = (props: SelectBugProps) => {
             isLoading={isDisabled}
             isDisabled={isDisabled || isSelectorDisabled}
             isRequired={isRequired}
+            size="sm"
         >
             <SelectItem
                 aria-label={TaskPriority.FEATURE}

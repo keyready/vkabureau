@@ -70,6 +70,7 @@ export const SelectTaskStatus = (props: SelectBugProps) => {
             color={renderItemColor(selectedKey as TaskStatus)}
             onChange={handleSelectChange}
             defaultSelectedKeys={new Set(defaultValue ? [defaultValue] : [])}
+            size="sm"
         >
             <SelectItem
                 aria-label={TaskStatus.COMPLETED}

@@ -1,17 +1,20 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { Task } from '../types/Task';
+import { Project } from '../types/Project';
 
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
-export const changeTask = createAsyncThunk<string, Partial<Task>, ThunkConfig<string>>(
-    'Task/changeTask',
-    async (props, thunkAPI) => {
+export const changeProject = createAsyncThunk<string, Partial<Project>, ThunkConfig<string>>(
+    'Project/changeProject',
+    async (project, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.put<string>(`/api/tasks/update`, props);
+            const response = await extra.api.put<string>(
+                `/api/projects/${project.id}/change`,
+                project,
+            );
 
             if (!response.data) {
                 throw new Error();
