@@ -87,3 +87,16 @@ func (tc *TaskController) UpdateTask(ctx *gin.Context) {
 
 	ctx.JSON(httpCode, gin.H{})
 }
+
+func (tc *TaskController) DeleteTask(gCtx *gin.Context) {
+	taskID := gCtx.Param("taskID")
+
+	httpCode, usecaseErr := tc.taskUsecase.DeleteTask(taskID)
+	if usecaseErr != nil {
+		err.ErrorHandler(gCtx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
+	}
+
+	gCtx.JSON(httpCode, gin.H{})
+}

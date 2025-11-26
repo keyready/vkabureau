@@ -12,6 +12,7 @@ type TaskUsecase interface {
 	AddTask(addTask request.AddTask) (httpCode int, err error)
 	UpdateTask(updateTask request.UpdateTask) (httpCode int, err error)
 	FetchTaskForProject(projectId string) (httpCode int, err error, tasks []response.TaskData)
+	DeleteTask(taskID string) (httpCode int, err error)
 	JoinToTask(joinToTask request.JoinToTask) (httpCode int, err error)
 }
 
@@ -21,6 +22,11 @@ type TaskUsecaseImpl struct {
 
 func NewTaskRepository(taskRepo repository.TaskRepository) TaskUsecase {
 	return TaskUsecaseImpl{taskRepo: taskRepo}
+}
+
+func (t TaskUsecaseImpl) DeleteTask(taskID string) (httpCode int, err error) {
+	httpCode, err = t.taskRepo.DeleteTask(taskID)
+	return httpCode, err
 }
 
 func (t TaskUsecaseImpl) JoinToTask(joinToTask request.JoinToTask) (httpCode int, err error) {

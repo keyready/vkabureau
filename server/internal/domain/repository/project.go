@@ -38,7 +38,7 @@ func (p ProjectRepositoryImpl) ChangeProject(ctx context.Context, changeProject 
 	var author models.User
 	err = p.mongoDB.
 		Collection("users").
-		FindOne(context.Background(), bson.D{bson.E{Key: "author", Value: changeProject.Author}}).
+		FindOne(context.Background(), bson.D{bson.E{Key: "login", Value: changeProject.Author}}).
 		Decode(&author)
 	if err != nil {
 		return http.StatusNotFound, fmt.Errorf("Автор %s не найден", changeProject.Author)

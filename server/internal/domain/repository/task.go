@@ -19,6 +19,7 @@ import (
 type TaskRepository interface {
 	AddTask(addTask request.AddTask) (httpCode int, err error)
 	UpdateTask(updateTask request.UpdateTask) (httpCode int, err error)
+	DeleteTask(taskIdString string) (httpCode int, err error)
 	FetchTaskForProjects(projectIdString string) (httpCode int, err error, tasks []response.TaskData)
 	JoinToTask(joinToTask request.JoinToTask) (httpCode int, err error)
 }
@@ -29,6 +30,24 @@ type TaskRepositoryImpl struct {
 
 func NewTaskRepository(mongoDB *mongo.Database) TaskRepository {
 	return TaskRepositoryImpl{mongoDB: mongoDB}
+}
+
+func (t TaskRepositoryImpl) DeleteTask(taskIDString string) (httpCode int, err error) {
+	taskID, _ := primitive.ObjectIDFromHex(taskIDString)
+
+	filter := bson.M{"_id": taskID}
+
+	_, err = t.mongoDB.Collection("tasks").
+		DeleteOne(
+			context.TODO(),
+			filter,
+			nil,
+		)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return http.StatusOK, nil
 }
 
 func (t TaskRepositoryImpl) JoinToTask(joinToTask request.JoinToTask) (httpCode int, err error) {

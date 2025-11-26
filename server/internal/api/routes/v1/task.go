@@ -20,5 +20,6 @@ func NewTaskRoutes(
 		taskRoutes.PUT("/update", tc.UpdateTask)
 		taskRoutes.GET("/:projectId", tc.FetchTaskForProjects)
 		taskRoutes.POST("/join", tc.JoinToTask)
+		taskRoutes.DELETE("/:taskId/delete", tc.DeleteTask)
 	}
 }
