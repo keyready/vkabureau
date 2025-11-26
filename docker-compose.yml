@@ -25,27 +25,27 @@ services:
     networks:
       - vkalance-net
 
-  mongo-express:
-    image: mongo-express
-    container_name: vkalance_mongo-express
-    restart: always
-    ports:
-      - 8081:8081
-    env_file:
-      - ./server/.env
-    depends_on:
-      - mongodb
-    networks:
-      - vkalance-net
+#  mongo-express:
+#    image: mongo-express
+#    container_name: vkalance_mongo-express
+#    restart: always
+#    ports:
+#      - 8081:8081
+#    env_file:
+#      - ./server/.env
+#    depends_on:
+#      - mongodb
+#    networks:
+#      - vkalance-net
 
-  client-builder:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    container_name: vkabureau-client-builder
-    volumes:
-      - ./client-files:/dist
-    command: sh -c "npm run build"
+#  client-builder:
+#    build:
+#      context: ./client
+#      dockerfile: Dockerfile
+#    container_name: vkabureau-client-builder
+#    volumes:
+#      - ./client-files:/dist
+#    command: sh -c "npm run build"
 
 networks:
   vkalance-net:

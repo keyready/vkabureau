@@ -5,9 +5,14 @@ import { createProject } from '../service/createProject';
 import { fetchProject } from '../service/fetchProject';
 import { Project } from '../types/Project';
 import { changeLikeStatus } from '../service/changeLikeStatus';
+import { deleteProject } from '../service/deleteProject';
+
+import { changeProject } from '@/entities/Project/model/service/changeProject';
 
 const initialState: ProjectSchema = {
     data: undefined,
+    editableProject: undefined,
+    isEditorMode: false,
     isLoading: false,
     isCreating: false,
     error: undefined,
@@ -16,7 +21,14 @@ const initialState: ProjectSchema = {
 export const ProjectSlice = createSlice({
     name: 'ProjectSlice',
     initialState,
-    reducers: {},
+    reducers: {
+        setEditedProject: (state, action: PayloadAction<Partial<Project>>) => {
+            state.editableProject = action.payload;
+        },
+        setEditorMode: (state, action: PayloadAction<boolean>) => {
+            state.isEditorMode = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(createProject.pending, (state) => {
@@ -40,6 +52,30 @@ export const ProjectSlice = createSlice({
                 state.data = action.payload;
             })
             .addCase(fetchProject.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(changeProject.pending, (state) => {
+                state.error = undefined;
+                state.isLoading = true;
+            })
+            .addCase(changeProject.fulfilled, (state) => {
+                state.isLoading = false;
+            })
+            .addCase(changeProject.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(deleteProject.pending, (state) => {
+                state.error = undefined;
+                state.isLoading = true;
+            })
+            .addCase(deleteProject.fulfilled, (state) => {
+                state.isLoading = false;
+            })
+            .addCase(deleteProject.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
             })

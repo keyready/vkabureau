@@ -1,17 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { Task } from '../types/Task';
-
 import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
-export const changeTask = createAsyncThunk<string, Partial<Task>, ThunkConfig<string>>(
-    'Task/changeTask',
-    async (props, thunkAPI) => {
+export const deleteProject = createAsyncThunk<string, string, ThunkConfig<string>>(
+    'Project/deleteProject',
+    async (projectId, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.put<string>(`/api/tasks/update`, props);
+            const response = await extra.api.delete<string>(`/api/projects/${projectId}/delete`);
 
             if (!response.data) {
                 throw new Error();

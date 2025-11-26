@@ -12,7 +12,7 @@ export const changeProfile = createAsyncThunk<Profile, Partial<RegisterUser>, Th
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.patch<Profile>(`/api/user/change`, profile);
+            const response = await extra.api.put<Profile>(`/api/user/change`, profile);
 
             if (!response.data) {
                 throw new Error();

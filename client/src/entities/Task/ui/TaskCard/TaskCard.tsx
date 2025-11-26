@@ -17,6 +17,7 @@ import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { toastDispatch } from '@/widgets/Toaster';
 import { getProfileData } from '@/entities/Profile';
 import { getProjectData } from '@/entities/Project';
+import { CreateTaskModal } from '@/entities/Task/ui/CreateTask/CreateTask';
 
 interface TaskCardProps {
     className?: string;
@@ -35,6 +36,7 @@ export const TaskCard = (props: TaskCardProps) => {
     const [newPriority, setNewPriority] = useState<TaskPriority>(task.priority);
     const [newStatus, setNewStatus] = useState<TaskStatus>(task.status);
     const [isContributorsShown, setIsContributorsShown] = useState<boolean>(false);
+    const [isEditModalOpened, setIsEditModalOpened] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
 
@@ -95,7 +97,7 @@ export const TaskCard = (props: TaskCardProps) => {
             await toastDispatch(
                 dispatch(
                     changeTask({
-                        taskId: task.id,
+                        ...task,
                         status: key as TaskStatus,
                         priority: task.priority,
                     }),
@@ -103,7 +105,7 @@ export const TaskCard = (props: TaskCardProps) => {
             );
             refetch();
         },
-        [refetch, dispatch, task.id, task.priority],
+        [dispatch, task, refetch],
     );
 
     const handleChangePriority = useCallback(
@@ -112,7 +114,7 @@ export const TaskCard = (props: TaskCardProps) => {
             await toastDispatch(
                 dispatch(
                     changeTask({
-                        taskId: task.id,
+                        ...task,
                         priority: key as TaskPriority,
                         status: task.status,
                     }),
@@ -120,7 +122,7 @@ export const TaskCard = (props: TaskCardProps) => {
             );
             refetch();
         },
-        [refetch, dispatch, task.id, task.status],
+        [dispatch, task, refetch],
     );
 
     return (
@@ -160,7 +162,7 @@ export const TaskCard = (props: TaskCardProps) => {
                 )}
             </VStack>
 
-            <VStack className="w-2/3">
+            <VStack className="gap-4 w-2/3">
                 <HStack maxW>
                     <SelectTaskPriority
                         isDisabled={isTaskChanging}
@@ -188,7 +190,25 @@ export const TaskCard = (props: TaskCardProps) => {
                         {isTaskChanging ? 'Ожидайте...' : 'Откликнуться'}
                     </Button>
                 )}
+                {profile?.id === project?.author.id && (
+                    <Button
+                        onPress={() => setIsEditModalOpened(true)}
+                        size="sm"
+                        className="self-end flex-[1_0_auto]"
+                        color="primary"
+                    >
+                        Редактровать
+                    </Button>
+                )}
             </VStack>
+
+            <CreateTaskModal
+                projectId={project?.id}
+                isOpened={isEditModalOpened}
+                setIsOpened={setIsEditModalOpened}
+                onSuccess={refetch}
+                initialTask={task}
+            />
         </HStack>
     );
 };

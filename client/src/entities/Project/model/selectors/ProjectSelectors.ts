@@ -5,3 +5,5 @@ export const getProjectIsLoading = (state: StateSchema) => state.project?.isLoad
 export const getProjectIsCreating = (state: StateSchema) => state.project?.isCreating;
 export const getProjectLikeIsSending = (state: StateSchema) => state.project?.isLikeSending;
 export const getProjectError = (state: StateSchema) => state.project?.error;
+export const getEditedProject = (state: StateSchema) => state.project?.editableProject || {};
+export const getIsEditorModeEnabled = (state: StateSchema) => state.project?.isEditorMode || false;
