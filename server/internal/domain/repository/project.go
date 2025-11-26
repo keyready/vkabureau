@@ -81,6 +81,17 @@ func (p ProjectRepositoryImpl) DeleteProject(ctx context.Context, projectIDStrin
 		return http.StatusInternalServerError, err
 	}
 
+	filter = bson.M{"entityId": projectID}
+	_, err = p.mongoDB.Collection("forums").
+		DeleteOne(
+			ctx,
+			filter,
+			nil,
+		)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
 	return http.StatusOK, nil
 }
 

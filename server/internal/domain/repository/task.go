@@ -47,6 +47,17 @@ func (t TaskRepositoryImpl) DeleteTask(taskIDString string) (httpCode int, err e
 		return http.StatusInternalServerError, err
 	}
 
+	filter = bson.M{"entityId": taskID}
+	_, err = t.mongoDB.Collection("forums").
+		DeleteOne(
+			context.TODO(),
+			filter,
+			nil,
+		)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
 	return http.StatusOK, nil
 }
 
