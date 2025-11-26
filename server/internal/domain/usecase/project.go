@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"server/internal/domain/repository"
 	"server/internal/domain/types/request"
 	"server/internal/domain/types/response"
@@ -10,11 +11,12 @@ import (
 
 type ProjectUsecase interface {
 	CreateProject(createProject request.CreateProject, documentNames []string) (httpCode int, err error)
-	UpdateProject(updateProject request.UpdateProject) (httpCode int, err error)
+	DeleteProject(ctx context.Context, projectID string) (httpCode int, err error)
 	FetchProject(projectId string) (httpCode int, err error, project response.ProjectData)
 	FetchAllProjects() (httpCode int, err error, projects []response.ProjectData)
 	OwnProjects(login string) (httpCode int, err error, projects []response.ProjectData)
 	LikeProject(likeProject request.LikeProject) (httpCode int, err error)
+	ChangeProject(ctx context.Context, changeProject request.UpdateProject) (httpCode int, err error)
 }
 
 type ProjectUsecaseImpl struct {
@@ -23,6 +25,22 @@ type ProjectUsecaseImpl struct {
 
 func NewProjectUsecaseImpl(projectRepo repository.ProjectRepository) *ProjectUsecaseImpl {
 	return &ProjectUsecaseImpl{projectRepo: projectRepo}
+}
+
+func (p ProjectUsecaseImpl) ChangeProject(ctx context.Context, changeProject request.UpdateProject) (httpCode int, err error) {
+	httpCode, err = p.projectRepo.ChangeProject(ctx, changeProject)
+	if err != nil {
+		return httpCode, err
+	}
+	return httpCode, nil
+}
+
+func (p ProjectUsecaseImpl) DeleteProject(ctx context.Context, projectID string) (httpCode int, err error) {
+	httpCode, err = p.projectRepo.DeleteProject(ctx, projectID)
+	if err != nil {
+		return httpCode, err
+	}
+	return httpCode, nil
 }
 
 func (p ProjectUsecaseImpl) LikeProject(likeProject request.LikeProject) (httpCode int, err error) {
@@ -59,15 +77,6 @@ func (p ProjectUsecaseImpl) FetchProject(projectId string) (httpCode int, err er
 	}
 
 	return httpCode, nil, project
-}
-
-func (p ProjectUsecaseImpl) UpdateProject(updateProject request.UpdateProject) (httpCode int, err error) {
-	httpCode, usecaseErr := p.projectRepo.UpdateProject(updateProject)
-	if usecaseErr != nil {
-		return httpCode, usecaseErr
-	}
-
-	return httpCode, nil
 }
 
 func (p ProjectUsecaseImpl) CreateProject(createProject request.CreateProject, documentNames []string) (httpCode int, err error) {

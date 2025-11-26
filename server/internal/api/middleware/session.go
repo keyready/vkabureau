@@ -2,15 +2,15 @@ package middleware
 
 import (
 	"fmt"
+	"server/internal/authorizer"
 	"server/internal/domain/types/e"
 	"server/pkg/err"
-	"server/pkg/helpers"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SessionValidate() gin.HandlerFunc {
+func SessionValidate(authorizer *authorizer.Authorizer) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.Request.Header.Get("Authorization")
 		if authHeader == "" {
@@ -32,7 +32,7 @@ func SessionValidate() gin.HandlerFunc {
 			)
 		}
 
-		claims, validErr := helpers.ValidateToken(token)
+		claims, validErr := authorizer.Authorizer.ValidateToken(token)
 		if validErr != nil {
 			err.ErrorHandler(
 				ctx,
@@ -43,6 +43,7 @@ func SessionValidate() gin.HandlerFunc {
 		}
 
 		ctx.Set("login", claims.Payload.Login)
+
 		ctx.Next()
 	}
 }

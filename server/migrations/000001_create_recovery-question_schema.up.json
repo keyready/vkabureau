@@ -1,0 +1,69 @@
+{
+  "migration": {
+    "name": "rollback_recovery_questions",
+    "description": "Удаление стандартных вопросов для восстановления пароля",
+    "collection": "recovery_questions",
+    "operations": [
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Как зовут вашего лучшего друга/подругу детства?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "В каком городе вы впервые встретили своего супруга/супругу?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Как называлась ваша первая школа?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Какой была ваша первая работа?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Какой у вас был первый мобильный телефон?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Какое имя вы дали своему первому питомцу?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Какую книгу вы прочитали первой в детстве?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Какое прозвище вам дали в школе?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Какую песню вы слушали чаще всего в подростковом возрасте?"
+        }
+      },
+      {
+        "operation": "delete",
+        "query": {
+          "question": "Как назывался ваш любимый ресторан/кафе, когда вы были подростком?"
+        }
+      }
+    ]
+  }
+}

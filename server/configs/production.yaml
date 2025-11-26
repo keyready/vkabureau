@@ -1,0 +1,13 @@
+server:
+  address: :2869
+
+authorizer:
+  accessSecretKey: access-secret-key
+
+database:
+  connUri: mongodb://admin:admin@mongodb:27017/vkabureau?ssl=false&authSource=admin
+  databaseName: vkabureau
+
+migrations:
+  enable: true
+  dirUrl: file:///app/migrations

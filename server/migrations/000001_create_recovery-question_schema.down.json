@@ -1,0 +1,119 @@
+{
+  "migration": {
+    "name": "insert_recovery_questions",
+    "description": "Добавление стандартных вопросов для восстановления пароля",
+    "collection": "recovery_questions",
+    "operations": [
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Как зовут вашего лучшего друга/подругу детства?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Как зовут вашего лучшего друга/подругу детства?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "В каком городе вы впервые встретили своего супруга/супругу?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "В каком городе вы впервые встретили своего супруга/супругу?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Как называлась ваша первая школа?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Как называлась ваша первая школа?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Какой была ваша первая работа?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Какой была ваша первая работа?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Какой у вас был первый мобильный телефон?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Какой у вас был первый мобильный телефон?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Какое имя вы дали своему первому питомцу?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Какое имя вы дали своему первому питомцу?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Какую книгу вы прочитали первой в детстве?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Какую книгу вы прочитали первой в детстве?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Какое прозвище вам дали в школе?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Какое прозвище вам дали в школе?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Какую песню вы слушали чаще всего в подростковом возрасте?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Какую песню вы слушали чаще всего в подростковом возрасте?"
+          }
+        }
+      },
+      {
+        "operation": "upsert",
+        "query": {
+          "question": "Как назывался ваш любимый ресторан/кафе, когда вы были подростком?"
+        },
+        "update": {
+          "$setOnInsert": {
+            "question": "Как назывался ваш любимый ресторан/кафе, когда вы были подростком?"
+          }
+        }
+      }
+    ]
+  }
+}

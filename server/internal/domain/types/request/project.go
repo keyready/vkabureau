@@ -1,5 +1,9 @@
 package request
 
+import (
+	"time"
+)
+
 type CreateProject struct {
 	Title       string `form:"title"`
 	Description string `form:"description"`
@@ -7,9 +11,14 @@ type CreateProject struct {
 }
 
 type UpdateProject struct {
-	ProjectID string `json:"projectId"`
-	Author    string `json:"author"`
-	NewStatus string `json:"status"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Status      string `json:"status"`
+
+	ProjectID string
+	Author    string
+
+	FinishedAt time.Time `bson:"finishedAt" json:"finishedAt"`
 }
 
 type LikeProject struct {

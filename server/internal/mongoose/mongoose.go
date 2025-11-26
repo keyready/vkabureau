@@ -2,37 +2,58 @@ package mongoose
 
 import (
 	"context"
-	"server/internal/domain/types/e"
-	"server/pkg/err"
+	"fmt"
 
-	"github.com/gin-gonic/gin"
+	_ "github.com/golang-migrate/migrate/v4/database/mongodb"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func MongoConnect() (mongoDB *mongo.Database) {
-	var ctx *gin.Context
-	connUri := "mongodb://admin:admin@mongodb:27017/"
-	clientOptions := options.Client().ApplyURI(connUri)
+func MongoConnect(
+	ctx context.Context,
+	config *Config,
+	migrationsCfg *MigrationConfig,
+) (*mongo.Database, error) {
+	clientOptions := options.Client().
+		ApplyURI(config.ConnUri)
 
-	mongoClient, mongoErr := mongo.Connect(context.TODO(), clientOptions)
+	mongoClient, mongoErr := mongo.Connect(ctx, clientOptions)
 	if mongoErr != nil {
-		err.ErrorHandler(ctx, &e.DatabaseError{Message: mongoErr.Error()})
+		return nil, fmt.Errorf("failed to connect mongo: %v", mongoErr)
 	}
 
-	mongoErr = mongoClient.Ping(context.TODO(), nil)
+	mongoErr = mongoClient.Ping(ctx, nil)
 	if mongoErr != nil {
-		err.ErrorHandler(ctx, &e.DatabaseError{Message: mongoErr.Error()})
+		return nil, fmt.Errorf("failed to ping mongo: %v", mongoErr)
 	}
 
-	mongoClient.Database("vkalance").
+	mongoClient.Database(config.DatabaseName).
 		Collection("users").
 		Indexes().
 		CreateOne(context.Background(), mongo.IndexModel{
 			Keys:    bson.D{{Key: "login"}},
 			Options: options.Index().SetUnique(true),
 		})
+
+	// m, err := migrate.New(
+	// 	migrationsCfg.DirUrl,
+	// 	config.ConnUri,
+	// )
+	// if err != nil {
+	// 	log.Fatalln("failed to init migrations: ", err.Error())
+	// }
+
+	// if migrationsCfg.Enable {
+	// 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+	// 		log.Fatalln("failed to up migrations: ", err.Error())
+	// 	}
+	// } else {
+	// 	if err := m.Down(); err != nil {
+	// 		log.Fatalln("failed to down migrations: ", err.Error())
+	// 	}
+	// }
 
 	recoveryQuestions := []string{
 		"Как зовут вашего лучшего друга/подругу детства?",
@@ -48,7 +69,7 @@ func MongoConnect() (mongoDB *mongo.Database) {
 	}
 
 	for _, question := range recoveryQuestions {
-		mongoClient.Database("vkalance").
+		mongoClient.Database(config.DatabaseName).
 			Collection("recovery_questions").
 			UpdateOne(
 				context.TODO(),
@@ -61,5 +82,6 @@ func MongoConnect() (mongoDB *mongo.Database) {
 				options.Update().SetUpsert(true),
 			)
 	}
-	return mongoClient.Database("vkalance")
+
+	return mongoClient.Database(config.DatabaseName), nil
 }

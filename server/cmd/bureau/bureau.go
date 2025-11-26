@@ -2,31 +2,39 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os/signal"
+	"server/cmd"
 	"server/internal/api/routes"
+	"server/internal/authorizer"
 	"server/internal/mongoose"
 	"syscall"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	_ = godotenv.Load()
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	mongodb := mongoose.MongoConnect()
+	serviceConfig := cmd.Execute()
 
-	appHandlers := routes.InitRoutes(mongodb)
+	mongodb, err := mongoose.MongoConnect(
+		ctx,
+		&serviceConfig.Database,
+		&serviceConfig.Migrations,
+	)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-	serverPort := fmt.Sprintf(":%d", 2869)
+	authorizer := authorizer.New(&serviceConfig.Authorizer)
+
+	appHandlers := routes.InitRoutes(mongodb, authorizer)
+
 	httpServer := &http.Server{
-		Addr:    serverPort,
+		Addr:    serviceConfig.Server.Address,
 		Handler: appHandlers,
 	}
 

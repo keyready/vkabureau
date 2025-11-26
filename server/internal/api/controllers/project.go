@@ -24,6 +24,38 @@ func NewProjectController(projectUsecase usecase.ProjectUsecase) *ProjectControl
 	return &ProjectController{projectUsecase: projectUsecase}
 }
 
+func (pc *ProjectController) ChangeProject(gCtx *gin.Context) {
+	projectID := gCtx.Param("projectId")
+
+	jsonForm := request.UpdateProject{}
+	if bindErr := gCtx.ShouldBindJSON(&jsonForm); bindErr != nil {
+		err.ErrorHandler(gCtx, &e.ValidationError{Message: bindErr.Error()})
+	}
+
+	jsonForm.ProjectID = projectID
+	jsonForm.Author = gCtx.GetString("login")
+
+	ctx := gCtx.Request.Context()
+	httpCode, usecaseErr := pc.projectUsecase.ChangeProject(ctx, jsonForm)
+	if usecaseErr != nil {
+		err.ErrorHandler(gCtx, &e.ServerError{Message: usecaseErr.Error()})
+	}
+
+	gCtx.JSON(httpCode, gin.H{})
+}
+
+func (pc *ProjectController) DeleteProject(gCtx *gin.Context) {
+	projectID := gCtx.Param("projectId")
+
+	ctx := gCtx.Request.Context()
+	httpCode, usecaseErr := pc.projectUsecase.DeleteProject(ctx, projectID)
+	if usecaseErr != nil {
+		err.ErrorHandler(gCtx, &e.ServerError{Message: usecaseErr.Error()})
+	}
+
+	gCtx.JSON(httpCode, gin.H{})
+}
+
 func (pc *ProjectController) LikeProject(ctx *gin.Context) {
 	var likeProject request.LikeProject
 
@@ -107,22 +139,6 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 	formData.Author = ctx.GetString("login")
 
 	httpCode, usecaseErr := pc.projectUsecase.CreateProject(formData, documentNames)
-	if usecaseErr != nil {
-		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
-	}
-
-	ctx.JSON(httpCode, gin.H{})
-}
-
-func (pc *ProjectController) UpdateProject(ctx *gin.Context) {
-	var updateProject request.UpdateProject
-	updateProject.Author = ctx.GetString("login")
-
-	if bindErr := ctx.ShouldBindJSON(&updateProject); bindErr != nil {
-		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
-	}
-
-	httpCode, usecaseErr := pc.projectUsecase.UpdateProject(updateProject)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
 	}

@@ -3,9 +3,6 @@ package repository
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"server/internal/domain/types/dto"
 	"server/internal/domain/types/enum"
@@ -13,6 +10,10 @@ import (
 	"server/internal/domain/types/request"
 	"server/internal/domain/types/response"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type TaskRepository interface {
@@ -208,9 +209,12 @@ func (t TaskRepositoryImpl) UpdateTask(updateTask request.UpdateTask) (httpCode 
 			bson.M{"_id": taskId},
 			bson.M{
 				"$set": bson.M{
-					"status":    enum.Status(updateTask.NewStatus),
-					"priority":  enum.Priority(updateTask.NewPriority),
-					"updatedAt": time.Now(),
+					"title":       updateTask.Title,
+					"description": updateTask.Description,
+					"status":      enum.Status(updateTask.Status),
+					"priority":    enum.Priority(updateTask.Priority),
+					"deadline":    updateTask.Deadline,
+					"updatedAt":   time.Now(),
 				},
 			},
 		)

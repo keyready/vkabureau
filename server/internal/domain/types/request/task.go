@@ -1,6 +1,8 @@
 package request
 
-import "time"
+import (
+	"time"
+)
 
 type AddTask struct {
 	ProjectID   string    `json:"projectId"`
@@ -12,9 +14,12 @@ type AddTask struct {
 }
 
 type UpdateTask struct {
-	TaskID      string `json:"taskId"`
-	NewStatus   string `json:"status"`
-	NewPriority string `json:"priority"`
+	TaskID      string    `json:"taskId"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Status      string    `json:"status"`
+	Priority    string    `json:"priority"`
+	Deadline    time.Time `json:"deadline"`
 }
 
 type JoinToTask struct {

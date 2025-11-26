@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25.4-alpine AS builder
 
 WORKDIR /build
 
@@ -10,12 +10,16 @@ RUN go mod download && \
 
 COPY . .
 
-RUN go build -ldflags="-s -w" -o /build/main ./cmd/main.go
+RUN go build -ldflags="-s -w" -o /build/main ./cmd/bureau/bureau.go
 
 FROM alpine AS prod
 
 WORKDIR /app
 
 COPY --from=builder /build/main /app/main
+COPY --from=builder /build/configs /app/configs
+COPY --from=builder /build/migrations /app/migrations
 
-CMD ["/app/main"]
+ENTRYPOINT ["/app/main","--config-path=/app/configs/production.yaml"]
+
+EXPOSE 2869

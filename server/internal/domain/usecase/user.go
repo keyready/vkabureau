@@ -1,17 +1,17 @@
 package usecase
 
 import (
-	"context"
 	"errors"
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
 	"net/http"
+	"server/internal/authorizer"
 	"server/internal/domain/repository"
-	"server/internal/domain/types/dto"
 	"server/internal/domain/types/models"
 	"server/internal/domain/types/request"
 	"server/internal/domain/types/response"
-	"server/pkg/helpers"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserUsecase interface {
@@ -24,12 +24,18 @@ type UserUsecase interface {
 }
 
 type UserUsecaseImpl struct {
-	userRepo repository.UserRepository
-	ctx      context.Context
+	authorizer *authorizer.Authorizer
+	userRepo   repository.UserRepository
 }
 
-func NewUserUsecaseImpl(userRepo repository.UserRepository) UserUsecase {
-	return &UserUsecaseImpl{userRepo: userRepo}
+func NewUserUsecaseImpl(
+	userRepo repository.UserRepository,
+	authorizer *authorizer.Authorizer,
+) UserUsecase {
+	return &UserUsecaseImpl{
+		userRepo:   userRepo,
+		authorizer: authorizer,
+	}
 }
 
 func (u *UserUsecaseImpl) FetchAllQuestions() (httpCode int, err error, questions []models.RecoveryQuestion) {
@@ -87,7 +93,15 @@ func (u *UserUsecaseImpl) Login(login request.Login) (httpCode int, err error, l
 		return http.StatusBadRequest, errors.New("Неверный пароль"), loginResponse
 	}
 
-	loginResponse.AccessToken = helpers.GenerateAccessToken(dto.JwtPayload{Login: login.UserLogin})
+	payload := authorizer.Payload{
+		Login: login.UserLogin,
+	}
+	token, err := u.authorizer.Authorizer.GenerateToken(payload)
+	if err != nil {
+		return http.StatusInternalServerError, fmt.Errorf("failed to generate token: %v", err), loginResponse
+	}
+
+	loginResponse.AccessToken = token
 
 	return httpCode, nil, loginResponse
 }
