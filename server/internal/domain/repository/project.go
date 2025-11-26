@@ -52,9 +52,7 @@ func (p ProjectRepositoryImpl) ChangeProject(ctx context.Context, changeProject 
 			bson.M{"$set": bson.M{
 				"title":       changeProject.Title,
 				"description": changeProject.Description,
-				"status":      enum.Status(changeProject.Status),
 				"updatedAt":   time.Now(),
-				"finishedAt":  changeProject.FinishedAt,
 			}},
 		)
 	if err != nil {

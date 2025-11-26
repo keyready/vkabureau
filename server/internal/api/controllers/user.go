@@ -22,11 +22,15 @@ func (uc UserController) ChangeProfile(ctx *gin.Context) {
 	var changeProfile request.ChangeProfile
 	if bindErr := ctx.ShouldBindJSON(&changeProfile); bindErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
+
+		return
 	}
 
 	httpCode, usecaseErr, updateProfile := uc.userUsecase.ChangeProfile(changeProfile)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, updateProfile)
@@ -38,6 +42,8 @@ func (uc *UserController) UserData(ctx *gin.Context) {
 	httpCode, usecaseErr, userData := uc.userUsecase.UserData(login)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, userData)
@@ -49,6 +55,8 @@ func (uc *UserController) Profile(ctx *gin.Context) {
 	httpCode, usecaseErr, profile := uc.userUsecase.Profile(login)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, profile)
@@ -58,11 +66,15 @@ func (uc *UserController) SignUp(ctx *gin.Context) {
 	jsonForm := request.SignUp{}
 	if bindErr := ctx.ShouldBindJSON(&jsonForm); bindErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
+
+		return
 	}
 
 	httpCode, usecaseErr := uc.userUsecase.SignUp(jsonForm)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, gin.H{})
@@ -72,11 +84,15 @@ func (uc *UserController) Login(ctx *gin.Context) {
 	var loginRequest request.Login
 	if bindErr := ctx.ShouldBindJSON(&loginRequest); bindErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
+
+		return
 	}
 
 	httpCode, usecaseErr, loginResponse := uc.userUsecase.Login(loginRequest)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, loginResponse)

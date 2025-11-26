@@ -30,6 +30,8 @@ func (f *ForumController) FetchAllMessages(ctx *gin.Context) {
 	httpCode, usecaseErr, messages := f.forumUsecase.FetchAllMessages(forumId)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, messages)
@@ -41,6 +43,8 @@ func (f *ForumController) FetchOneForum(ctx *gin.Context) {
 	httpCode, usecaseErr, forum := f.forumUsecase.FetchOneForum(forumId)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, forum)
@@ -52,6 +56,8 @@ func (f *ForumController) MyForums(ctx *gin.Context) {
 	httpCode, usecaseErr, forums := f.forumUsecase.MyForums(me)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, forums)
@@ -62,6 +68,8 @@ func (f *ForumController) SendMessage(ctx *gin.Context) {
 
 	if bindErr := ctx.ShouldBind(&formData); bindErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
+
+		return
 	}
 
 	multipartForm, mpfdErr := ctx.MultipartForm()
@@ -72,7 +80,10 @@ func (f *ForumController) SendMessage(ctx *gin.Context) {
 				Message: mpfdErr.Error(),
 			},
 		)
+
+		return
 	}
+
 	formData.Author = ctx.GetString("login")
 
 	attachNames := []string{}
@@ -87,6 +98,8 @@ func (f *ForumController) SendMessage(ctx *gin.Context) {
 		savePath := fmt.Sprintf("%s/%s", ATTACH_STORAGE, img.Filename)
 		if uploadErr := ctx.SaveUploadedFile(img, savePath); uploadErr != nil {
 			err.ErrorHandler(ctx, &e.ServerError{Message: uploadErr.Error()})
+
+			return
 		}
 
 		attachNames = append(attachNames, fileName)
@@ -95,6 +108,8 @@ func (f *ForumController) SendMessage(ctx *gin.Context) {
 	httpCode, usecaseErr := f.forumUsecase.SendMessage(formData, attachNames)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, gin.H{})

@@ -30,6 +30,8 @@ func (pc *ProjectController) ChangeProject(gCtx *gin.Context) {
 	jsonForm := request.UpdateProject{}
 	if bindErr := gCtx.ShouldBindJSON(&jsonForm); bindErr != nil {
 		err.ErrorHandler(gCtx, &e.ValidationError{Message: bindErr.Error()})
+
+		return
 	}
 
 	jsonForm.ProjectID = projectID
@@ -39,6 +41,8 @@ func (pc *ProjectController) ChangeProject(gCtx *gin.Context) {
 	httpCode, usecaseErr := pc.projectUsecase.ChangeProject(ctx, jsonForm)
 	if usecaseErr != nil {
 		err.ErrorHandler(gCtx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	gCtx.JSON(httpCode, gin.H{})
@@ -51,6 +55,8 @@ func (pc *ProjectController) DeleteProject(gCtx *gin.Context) {
 	httpCode, usecaseErr := pc.projectUsecase.DeleteProject(ctx, projectID)
 	if usecaseErr != nil {
 		err.ErrorHandler(gCtx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	gCtx.JSON(httpCode, gin.H{})
@@ -62,11 +68,15 @@ func (pc *ProjectController) LikeProject(ctx *gin.Context) {
 	bindErr := ctx.ShouldBindJSON(&likeProject)
 	if bindErr != nil {
 		err.ErrorHandler(ctx, &e.ValidationError{Message: bindErr.Error()})
+
+		return
 	}
 
 	httpCode, usecaseErr := pc.projectUsecase.LikeProject(likeProject)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, gin.H{})
@@ -78,6 +88,8 @@ func (pc *ProjectController) OwnProject(ctx *gin.Context) {
 	httpCode, usecaseErr, projects := pc.projectUsecase.OwnProjects(login)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, projects)
@@ -89,6 +101,8 @@ func (pc *ProjectController) FetchProject(ctx *gin.Context) {
 	httpCode, usecaseErr, project := pc.projectUsecase.FetchProject(projectId)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, usecaseErr)
+
+		return
 	}
 
 	ctx.JSON(httpCode, project)
@@ -98,6 +112,7 @@ func (pc *ProjectController) FetchAllProjects(ctx *gin.Context) {
 	httpCode, usecaseErr, projects := pc.projectUsecase.FetchAllProjects()
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+		return
 	}
 
 	ctx.JSON(httpCode, projects)
@@ -114,6 +129,8 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 				Message: mpfdErr.Error(),
 			},
 		)
+
+		return
 	}
 
 	if bindErr := ctx.ShouldBind(&formData); bindErr != nil {
@@ -121,6 +138,8 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 			ctx,
 			&e.ValidationError{Message: bindErr.Error()},
 		)
+
+		return
 	}
 
 	documentNames := []string{}
@@ -131,6 +150,8 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 			fmt.Sprintf("%s/%s", DOCUMENTS_STORAGE, doc.Filename),
 		); uploadErr != nil {
 			err.ErrorHandler(ctx, &e.ServerError{Message: uploadErr.Error()})
+
+			return
 		}
 
 		documentNames = append(documentNames, doc.Filename)
@@ -141,6 +162,8 @@ func (pc *ProjectController) CreateProject(ctx *gin.Context) {
 	httpCode, usecaseErr := pc.projectUsecase.CreateProject(formData, documentNames)
 	if usecaseErr != nil {
 		err.ErrorHandler(ctx, &e.ServerError{Message: usecaseErr.Error()})
+
+		return
 	}
 
 	ctx.JSON(httpCode, gin.H{})
