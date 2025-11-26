@@ -89,7 +89,7 @@ func (tc *TaskController) UpdateTask(ctx *gin.Context) {
 }
 
 func (tc *TaskController) DeleteTask(gCtx *gin.Context) {
-	taskID := gCtx.Param("taskID")
+	taskID := gCtx.Param("taskId")
 
 	httpCode, usecaseErr := tc.taskUsecase.DeleteTask(taskID)
 	if usecaseErr != nil {
