@@ -23,6 +23,7 @@ import { changeProject } from '@/entities/Project/model/service/changeProject';
 import { toastDispatch } from '@/widgets/Toaster';
 import { deleteProject } from '@/entities/Project/model/service/deleteProject';
 import { RoutePath } from '@/shared/config/routeConfig';
+import { fetchProject } from '@/entities/Project';
 
 interface ProjectInfoBlockProps {
     className?: string;
@@ -45,10 +46,6 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
         }
     }, [dispatch, project]);
 
-    useEffect(() => {
-        console.log(userId, editedProject.author?.id);
-    }, [editedProject.author?.id, userId]);
-
     const renderDate = useMemo(() => {
         if (!project?.createdAt) return '';
 
@@ -67,10 +64,11 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
         const res = await toastDispatch(dispatch(changeProject(editedProject)), {
             success: 'Изменения успешно внесены',
         });
-        if (deleteProject.fulfilled.match(res)) {
+        if (changeProject.fulfilled.match(res)) {
             dispatch(ProjectActions.setEditorMode(false));
+            await dispatch(fetchProject(project?.id || ''));
         }
-    }, [dispatch, editedProject]);
+    }, [dispatch, editedProject, project?.id]);
 
     const handleDeleteProject = useCallback(async () => {
         const res = await toastDispatch(dispatch(deleteProject(project?.id || '')), {
@@ -112,6 +110,16 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
         [dispatch, editedProject],
     );
 
+    const handleKeyDown = useCallback(
+        (ev: React.KeyboardEvent) => {
+            if (ev.code === 'Enter' && ev.ctrlKey) {
+                ev.preventDefault();
+                handleSaveChanges();
+            }
+        },
+        [handleSaveChanges],
+    );
+
     return (
         <div
             className={classNames(
@@ -122,6 +130,7 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
         >
             <VStack maxW gap="12px" className="col-span-6">
                 <Input
+                    onKeyDown={handleKeyDown}
                     classNames={{
                         inputWrapper: cn(
                             'shadow-none',
@@ -143,6 +152,7 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
                 <Textarea
                     minRows={1}
                     maxRows={5}
+                    onKeyDown={handleKeyDown}
                     classNames={{
                         inputWrapper: cn(
                             'shadow-none h-fit',

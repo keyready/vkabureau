@@ -1,4 +1,5 @@
 client/dist
 client-files/
 client/node_modules
+.idea
 server/bin

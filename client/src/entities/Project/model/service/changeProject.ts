@@ -7,14 +7,14 @@ import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
 export const changeProject = createAsyncThunk<string, Partial<Project>, ThunkConfig<string>>(
     'Project/changeProject',
-    async (project, thunkAPI) => {
+    async ({ title, description, id }, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
         try {
-            const response = await extra.api.put<string>(
-                `/api/projects/${project.id}/change`,
-                project,
-            );
+            const response = await extra.api.put<string>(`/api/projects/${id}/change`, {
+                title,
+                description,
+            });
 
             if (!response.data) {
                 throw new Error();
