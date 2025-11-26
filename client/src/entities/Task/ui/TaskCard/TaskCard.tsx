@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Button } from '@nextui-org/react';
+import { Button, ButtonGroup } from '@nextui-org/react';
 import { add, formatDistance } from 'date-fns';
 
 import { Task, TaskPriority, TaskStatus } from '../../model/types/Task';
@@ -18,6 +18,7 @@ import { toastDispatch } from '@/widgets/Toaster';
 import { getProfileData } from '@/entities/Profile';
 import { getProjectData } from '@/entities/Project';
 import { CreateTaskModal } from '@/entities/Task/ui/CreateTask/CreateTask';
+import { deleteTask } from '@/entities/Task/model/service/deleteTask';
 
 interface TaskCardProps {
     className?: string;
@@ -125,6 +126,15 @@ export const TaskCard = (props: TaskCardProps) => {
         [dispatch, task, refetch],
     );
 
+    const handleDeleteTask = useCallback(async () => {
+        const res = await toastDispatch(dispatch(deleteTask(task?.id || '')), {
+            success: 'Задача удалена',
+        });
+        if (deleteTask.fulfilled.match(res)) {
+            await refetch();
+        }
+    }, [dispatch, refetch, task?.id]);
+
     return (
         <HStack
             align="start"
@@ -191,14 +201,18 @@ export const TaskCard = (props: TaskCardProps) => {
                     </Button>
                 )}
                 {profile?.id === project?.author.id && (
-                    <Button
-                        onPress={() => setIsEditModalOpened(true)}
-                        size="sm"
-                        className="self-end flex-[1_0_auto]"
-                        color="primary"
-                    >
-                        Редактровать
-                    </Button>
+                    <ButtonGroup className="self-end ">
+                        <Button
+                            onPress={() => setIsEditModalOpened(true)}
+                            size="sm"
+                            color="primary"
+                        >
+                            Редактровать
+                        </Button>
+                        <Button onPress={handleDeleteTask} size="sm" color="danger">
+                            Удалить
+                        </Button>
+                    </ButtonGroup>
                 )}
             </VStack>
 

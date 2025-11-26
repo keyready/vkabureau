@@ -7,11 +7,20 @@ import { ThunkConfig } from '@/app/providers/StoreProvider/config/StateSchema';
 
 export const changeTask = createAsyncThunk<string, Partial<Task>, ThunkConfig<string>>(
     'Task/changeTask',
-    async (props, thunkAPI) => {
+    async (task, thunkAPI) => {
         const { extra, rejectWithValue } = thunkAPI;
 
+        const { title, deadline, description, priority, status, id } = task;
+
         try {
-            const response = await extra.api.put<string>(`/api/tasks/update`, props);
+            const response = await extra.api.put<string>(`/api/tasks/update`, {
+                title,
+                deadline,
+                description,
+                priority,
+                status,
+                taskId: id,
+            });
 
             if (!response.data) {
                 throw new Error();
