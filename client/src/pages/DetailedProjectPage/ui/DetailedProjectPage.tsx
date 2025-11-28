@@ -23,6 +23,7 @@ import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HStack, VStack } from '@/shared/ui/Stack';
 import { AuthorBlock } from '@/entities/Profile';
 import { ContributorsBlock, TaskReducer, TasksList } from '@/entities/Task';
+import { useOnboarding } from '@/shared/lib/hooks/useOnboarding';
 
 interface DetailedProjectPageProps {
     className?: string;
@@ -41,6 +42,91 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
 
     const [isFiltersOpened, setIsFiltersOpened] = useState<boolean>(false);
 
+    const { start } = useOnboarding('detailed-project-page', [
+        {
+            element: '.detailedProjectTitleSelector',
+            popover: {
+                title: 'Название проекта или идеи',
+                description: 'Зацепит Вас или ваших коллег для совместного решения',
+            },
+        },
+        {
+            element: '.detailedProjectDescriptionSelector',
+            popover: {
+                title: 'Описание проекта',
+                description:
+                    'Позволяет авторы выразить свои мысли и идеи, которые он хотел бы реализовать',
+            },
+        },
+        {
+            element: '.detailedProjectDateSelector',
+            popover: {
+                title: 'Дата создания проекта',
+            },
+        },
+        {
+            element: '.detailedProjectTasksSelector',
+            popover: {
+                title: 'Задачи проекта',
+                description:
+                    'Любой проект разделен на подзадачи, у них есть приоритет и статус. Вы можете откликаться на задачи, которые близки к Вам по компетенциям',
+            },
+        },
+        {
+            element: '.detailedProjectFiltersSelector',
+            popover: {
+                title: 'Фильтры по задачам',
+                description:
+                    'Позволяют выбрать из множества задач те, у которых определенный статус или приоритет',
+            },
+        },
+        {
+            element: '.wrapperTasksList',
+            popover: {
+                title: 'Здесь перечислены все задачи проекта, которые автор посчитал важными для реализации идеи',
+                description: '',
+            },
+        },
+        {
+            element: '.taskTitleSelector',
+            popover: {
+                title: 'Краткая формулировка',
+                description: '',
+            },
+        },
+        {
+            element: '.taskDateSelector',
+            popover: {
+                title: 'Сроки выполнения',
+                description: 'Сроки, до которых надо выполнить задачу по мнению автора',
+            },
+        },
+        {
+            element: '.taskDescriptionSelector',
+            popover: {
+                title: 'Описание задачи',
+                description:
+                    'Подробное описание задачи, позволяет вникнуть в суть и понять, надо ли оно вам это все...',
+            },
+        },
+        {
+            element: '.taskPrioritySelector',
+            popover: {
+                title: 'Приоритет задачи',
+                description:
+                    'Определяет, на сколько задача важна: критическая, средняя или бэклог (когда-нибудь)',
+            },
+        },
+        {
+            element: '.taskStatusSelector',
+            popover: {
+                title: 'Статус задачи',
+                description:
+                    'Задача может быть новой, в процессе, решена или на проверке. Статусы изменяет автор задачи',
+            },
+        },
+    ]);
+
     useEffect(() => {
         if (projectId) {
             dispatch(fetchProject(projectId));
@@ -48,6 +134,10 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
             navigate(RoutePath.projects);
         }
     }, [dispatch, navigate, projectId]);
+
+    useEffect(() => {
+        if (!isProjectLoading) start();
+    }, [isProjectLoading, start]);
 
     if (isProjectLoading) {
         return (
@@ -67,7 +157,7 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                     <ProjectInfoBlock project={project} />
 
                     <HStack className="w-full items-start relative gap-4">
-                        <VStack maxW className="w-8/12" gap="12px">
+                        <VStack maxW className="detailedProjectTasksSelector w-8/12" gap="12px">
                             <HStack
                                 maxW
                                 justify="between"
@@ -75,7 +165,12 @@ const DetailedProjectPage = memo((props: DetailedProjectPageProps) => {
                                 className="p-5 rounded-xl bg-white"
                             >
                                 <h1 className="text-xl text-black uppercase">Задачи</h1>
-                                <Button onClick={() => setIsFiltersOpened(true)}>Фильтры</Button>
+                                <Button
+                                    className="detailedProjectFiltersSelector"
+                                    onClick={() => setIsFiltersOpened(true)}
+                                >
+                                    Фильтры
+                                </Button>
                             </HStack>
                             <TasksList
                                 isFiltersOpened={isFiltersOpened}

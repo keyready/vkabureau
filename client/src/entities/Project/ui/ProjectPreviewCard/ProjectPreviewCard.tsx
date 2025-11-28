@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react';
-import { RiCalendarLine, RiHeart2Line } from '@remixicon/react';
+import { DetailedHTMLProps, HTMLAttributes, useCallback, useMemo } from 'react';
+import { RiCalendarLine, RiGroupLine, RiHeart2Line, RiListCheck } from '@remixicon/react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@nextui-org/react';
 import { useSelector } from 'react-redux';
@@ -16,14 +16,16 @@ import { HStack, VStack } from '@/shared/ui/Stack';
 import { RoutePath } from '@/shared/config/routeConfig';
 import { getProfileData } from '@/entities/Profile';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
+import { pluralize } from '@/shared/lib/pluralize';
 
-interface ProjectPreviewCardProps {
+interface ProjectPreviewCardProps
+    extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     className?: string;
     project: Project;
 }
 
 export const ProjectPreviewCard = (props: ProjectPreviewCardProps) => {
-    const { className, project } = props;
+    const { className, project, ...rest } = props;
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -68,6 +70,7 @@ export const ProjectPreviewCard = (props: ProjectPreviewCardProps) => {
 
     return (
         <VStack
+            {...rest}
             onClick={handleCardClick}
             role="link"
             gap="12px"
@@ -75,17 +78,36 @@ export const ProjectPreviewCard = (props: ProjectPreviewCardProps) => {
             className={classNames(classes.ProjectPreviewCard, {}, [className])}
         >
             <VStack maxW>
-                <h1 className="text-l text-accent font-bold">{project.title}</h1>
-                <HStack maxW>
-                    <RiCalendarLine className="text-accent" />
+                <h1 className="projectTitleSelector text-l w-full text-accent font-bold truncate">
+                    {project.title}
+                </h1>
+                <HStack maxW className="projectDateSelector gap-2">
+                    <RiCalendarLine size={16} className="text-accent" />
                     <h2 className="text-black">{renderDate}</h2>
                 </HStack>
+                <div className="flex w-full gap-3">
+                    <div className="projectTasksSelector flex gap-1 items-center">
+                        <RiListCheck className="text-accent" size={14} />
+                        <h2 className="text-black">
+                            {pluralize(project.tasks.length, ['задача', 'задачи', 'задач'])}
+                        </h2>
+                    </div>
+                    <div className="projectUsersSelector flex gap-1 items-center">
+                        <RiGroupLine className="text-accent" size={14} />
+                        <h2 className="text-black">
+                            {pluralize(
+                                new Set(project.tasks.map((t) => t.contributors.length)).size,
+                                ['участник', 'участника', 'участников'],
+                            )}
+                        </h2>
+                    </div>
+                </div>
             </VStack>
             <Button
                 size="sm"
                 isDisabled={isProjectLikeSending}
                 onClick={handleLikeButtonClick}
-                className="self-end"
+                className="projectLikesSelector self-end"
                 color={isLikeSelected ? 'danger' : 'default'}
             >
                 <HStack maxW justify="center">

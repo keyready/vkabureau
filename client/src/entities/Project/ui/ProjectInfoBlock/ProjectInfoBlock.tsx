@@ -5,11 +5,12 @@ import {
     RiRestartLine,
     RiSave2Fill,
 } from '@remixicon/react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Button, cn, Divider, Input, Textarea, Tooltip } from '@nextui-org/react';
 import { useSelector } from 'react-redux';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 import { Project } from '../../model/types/Project';
 import { getEditedProject, getIsEditorModeEnabled } from '../../model/selectors/ProjectSelectors';
@@ -37,6 +38,8 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
     const isEditorMode = useSelector(getIsEditorModeEnabled);
     const editedProject = useSelector(getEditedProject);
 
+    const projectTitleRef = useRef<HTMLInputElement | null>(null);
+
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -45,6 +48,12 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
             dispatch(ProjectActions.setEditedProject(project));
         }
     }, [dispatch, project]);
+
+    useEffect(() => {
+        if (projectTitleRef?.current && isEditorMode) {
+            projectTitleRef.current.focus();
+        }
+    }, [isEditorMode]);
 
     const renderDate = useMemo(() => {
         if (!project?.createdAt) return '';
@@ -84,6 +93,7 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
         if (project) {
             dispatch(ProjectActions.setEditedProject(project));
             dispatch(ProjectActions.setEditorMode(false));
+            toast('Изменения отменены');
         }
     }, [dispatch, project]);
 
@@ -116,8 +126,12 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
                 ev.preventDefault();
                 handleSaveChanges();
             }
+            if (ev.code === 'Escape') {
+                ev.preventDefault();
+                handleRejectChanges();
+            }
         },
-        [handleSaveChanges],
+        [handleRejectChanges, handleSaveChanges],
     );
 
     return (
@@ -130,6 +144,8 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
         >
             <VStack maxW gap="12px" className="col-span-6">
                 <Input
+                    className="detailedProjectTitleSelector"
+                    ref={projectTitleRef}
                     onKeyDown={handleKeyDown}
                     classNames={{
                         inputWrapper: cn(
@@ -150,6 +166,7 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
                 <Divider />
 
                 <Textarea
+                    className="detailedProjectDescriptionSelector"
                     minRows={1}
                     maxRows={5}
                     onKeyDown={handleKeyDown}
@@ -170,7 +187,7 @@ export const ProjectInfoBlock = (props: ProjectInfoBlockProps) => {
                 />
             </VStack>
 
-            <HStack>
+            <HStack className="detailedProjectDateSelector">
                 <RiCalendarLine className="text-accent col-span-1" />
                 <h2 className="text-black">{renderDate}</h2>
             </HStack>

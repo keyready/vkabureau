@@ -143,10 +143,12 @@ export const TaskCard = (props: TaskCardProps) => {
         >
             <VStack maxW>
                 <HStack maxW>
-                    <h1 className="text-l text-black">{task.title}</h1>
-                    <p className={`text-xs text-gray-500 ${isDeadlineNear}`}>{renderDate}</p>
+                    <h1 className="taskTitleSelector text-l text-black">{task.title}</h1>
+                    <p className={`taskDateSelector text-xs text-gray-500 ${isDeadlineNear}`}>
+                        {renderDate}
+                    </p>
                 </HStack>
-                <p className="text-black">{task.description}</p>
+                <p className="text-black taskDescriptionSelector">{task.description}</p>
 
                 {task.contributors?.length ? (
                     <button
@@ -176,14 +178,14 @@ export const TaskCard = (props: TaskCardProps) => {
                 <HStack maxW>
                     <SelectTaskPriority
                         isDisabled={isTaskChanging}
-                        className="!w-full"
+                        className="!w-full taskPrioritySelector"
                         defaultValue={task.priority}
                         selectedKey={newPriority}
                         setSelectedKey={handleChangePriority}
                     />
                     <SelectTaskStatus
                         isDisabled={isTaskChanging}
-                        className="!w-full"
+                        className="!w-full taskStatusSelector"
                         defaultValue={task.status}
                         selectedKey={newStatus}
                         setSelectedKey={handleChangeStatus}

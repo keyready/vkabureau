@@ -30,14 +30,14 @@ export const Sidebar = (props: SidebarProps) => {
 
                 <VStack className="-translate-y-6" flexGrow maxW justify="center" align="center">
                     <VStack maxW gap="8px" justify="center" align="center">
-                        <AppLink to={RoutePath.main}>
+                        <AppLink className="mainSelector" to={RoutePath.main}>
                             <Icon className="text-white" Svg={HomeIcon} />
                         </AppLink>
-                        <AppLink to={RoutePath.projects}>
+                        <AppLink className="projectsSelector" to={RoutePath.projects}>
                             <Icon className="text-white" Svg={ProjectIcon} />
                         </AppLink>
                         {profile?.id && (
-                            <AppLink to={RoutePath.chats}>
+                            <AppLink className="forumsSelector" to={RoutePath.chats}>
                                 <RiChat4Line size={36} className="text-white" />
                             </AppLink>
                         )}

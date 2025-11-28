@@ -64,6 +64,7 @@
         "@remixicon/react": "^4.2.0",
         "axios": "1.6.0",
         "chart.js": "^4.4.4",
+        "driver.js": "^1.4.0",
         "framer-motion": "^11.3.21",
         "jsencrypt": "^3.3.2",
         "query-string": "^9.1.0",

@@ -1,5 +1,5 @@
 import { Button, Select, SelectItem, SelectSection, SharedSelection } from '@nextui-org/react';
-import { useCallback, useEffect, useState } from 'react';
+import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { RiAddBoxLine } from '@remixicon/react';
 import { AnimatePresence } from 'framer-motion';
 
@@ -18,12 +18,13 @@ import { Skeleton } from '@/shared/ui/Skeleton';
 import { DynamicModuleLoader } from '@/shared/lib/DynamicModuleLoader';
 import { MotionWrapper } from '@/widgets/MotionWrapper';
 
-interface ProjectsListProps {
+interface ProjectsListProps
+    extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     className?: string;
 }
 
 export const ProjectsList = (props: ProjectsListProps) => {
-    const { className } = props;
+    const { className, ...rest } = props;
 
     const { data: projects, isLoading: isProjectsLoading } = useProjects(false, {
         refetchOnMountOrArgChange: true,
@@ -119,7 +120,7 @@ export const ProjectsList = (props: ProjectsListProps) => {
 
     return (
         <DynamicModuleLoader reducers={{ project: ProjectReducer }}>
-            <VStack maxW>
+            <VStack maxW {...rest}>
                 <div className="flex w-full flex-wrap gap-4">
                     <AnimatePresence mode="wait">
                         {sortedProjects.map((project, index) => (
@@ -131,20 +132,25 @@ export const ProjectsList = (props: ProjectsListProps) => {
                                 animationPosition={index}
                                 animationDuration={0.1}
                             >
-                                <ProjectPreviewCard project={project} key={project.id} />
+                                <ProjectPreviewCard
+                                    className="projectCardSelector"
+                                    project={project}
+                                    key={project.id}
+                                />
                             </MotionWrapper>
                         ))}
                     </AnimatePresence>
                 </div>
                 <div className="fixed flex-row-reverse bottom-10 right-10 flex gap-3 items-center">
                     <Button
-                        className="w-[200px] bg-accent shadow-2xl"
+                        className="addProjectSelector w-[200px] bg-accent shadow-2xl"
                         onClick={handleImportProjectClick}
                     >
                         <RiAddBoxLine className="text-white" />
                         <p className="text-white">Создать проект</p>
                     </Button>
                     <Select
+                        className="sortingProjectsSelector"
                         classNames={{
                             base: 'w-[200px]',
                             label: 'group-data-[filled=true]:text-white',

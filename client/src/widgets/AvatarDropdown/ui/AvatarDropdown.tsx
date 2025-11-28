@@ -38,7 +38,10 @@ export const AvatarDropdown = (props: AvatarDropdownProps) => {
     if (!userData) {
         return (
             <>
-                <Button onClick={() => setIsOpened((prevState) => !prevState)}>
+                <Button
+                    className="loginButtonSelector"
+                    onClick={() => setIsOpened((prevState) => !prevState)}
+                >
                     <RiLoginBoxLine />
                 </Button>
 
@@ -56,8 +59,8 @@ export const AvatarDropdown = (props: AvatarDropdownProps) => {
     }
 
     return (
-        <Dropdown className={classNames('', {}, [className])}>
-            <DropdownTrigger>
+        <Dropdown className={classNames('', {}, [])}>
+            <DropdownTrigger className="avatarDropdownSelector">
                 <Image
                     className="cursor-pointer w-14 h-14 rounded-xl"
                     src={`/static/avatars/${userData?.avatar}`}

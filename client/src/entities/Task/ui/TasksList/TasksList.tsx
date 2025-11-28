@@ -62,7 +62,7 @@ export const TasksList = (props: TasksListProps) => {
                 >
                     <HStack
                         maxW
-                        className="p-4 bg-white rounded-xl"
+                        className="emptyTasksList p-4 bg-white rounded-xl"
                         justify="center"
                         align="center"
                     >
@@ -92,7 +92,10 @@ export const TasksList = (props: TasksListProps) => {
 
     return (
         <VStack maxW gap="12px">
-            <VStack maxW className={classNames(classes.TasksList, {}, [className])}>
+            <VStack
+                maxW
+                className={classNames(classes.TasksList, {}, [className, 'wrapperTasksList'])}
+            >
                 {filteredTasks.map((task) => (
                     <TaskCard projectId={project?.id} task={task} key={task.id} />
                 ))}
