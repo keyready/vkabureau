@@ -5,8 +5,8 @@ authorizer:
   accessSecretKey: access-secret-key
 
 database:
-  connUri: mongodb://admin:admin@mongodb:27017/vkabureau?ssl=false&authSource=admin
-  databaseName: vkabureau
+  connUri: mongodb://admin:admin@mongodb:27017/vkalance?ssl=false&authSource=admin
+  databaseName: vkalance
 
 migrations:
   enable: true
