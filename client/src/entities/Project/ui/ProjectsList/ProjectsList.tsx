@@ -1,13 +1,14 @@
 import { Button, Select, SelectItem, SelectSection, SharedSelection } from '@nextui-org/react';
 import { useCallback, useEffect, useState } from 'react';
 import { RiAddBoxLine } from '@remixicon/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 import { useProjects } from '../../api/ProjectsApi';
 import { ProjectPreviewCard } from '../ProjectPreviewCard/ProjectPreviewCard';
 import { CreateProjectModal } from '../CreateProjectModal/ui/CreateProjectModal';
 import { ProjectReducer } from '../../model/slice/ProjectSlice';
-import { Project, ProjectSorting } from '../../model/types/Project';
+import type { Project } from '../../model/types/Project';
+import { ProjectSorting, SORTING_CONFIG } from '../../model/types/ProjectsSorting';
 
 import classes from './ProjectsList.module.scss';
 
@@ -15,6 +16,7 @@ import { classNames } from '@/shared/lib/classNames';
 import { VStack } from '@/shared/ui/Stack';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { DynamicModuleLoader } from '@/shared/lib/DynamicModuleLoader';
+import { MotionWrapper } from '@/widgets/MotionWrapper';
 
 interface ProjectsListProps {
     className?: string;
@@ -23,7 +25,9 @@ interface ProjectsListProps {
 export const ProjectsList = (props: ProjectsListProps) => {
     const { className } = props;
 
-    const { data: projects, isLoading: isProjectsLoading } = useProjects(false);
+    const { data: projects, isLoading: isProjectsLoading } = useProjects(false, {
+        refetchOnMountOrArgChange: true,
+    });
 
     const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
     const [sortedProjects, setSortedProjects] = useState<Project[]>([]);
@@ -38,9 +42,19 @@ export const ProjectsList = (props: ProjectsListProps) => {
     }, []);
 
     useEffect(() => {
+        setSelectedSorting(
+            (localStorage.getItem('projects_sorting') || 'createdAt-asc') as ProjectSorting,
+        );
+    }, []);
+
+    useEffect(() => {
         if (!projects?.length) return;
+        localStorage.setItem('projects_sorting', selectedSorting);
 
         const sorted = [...projects].sort((a, b) => {
+            const aContributors = new Set(a.tasks.map((t) => t.contributors.map((c) => c.id)));
+            const bContributors = new Set(b.tasks.map((t) => t.contributors.map((c) => c.id)));
+
             switch (selectedSorting) {
                 case 'createdAt-asc':
                     return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
@@ -50,6 +64,18 @@ export const ProjectsList = (props: ProjectsListProps) => {
                     return b.likes.value - a.likes.value;
                 case 'popularity-desc':
                     return a.likes.value - b.likes.value;
+                case 'title-asc':
+                    return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+                case 'title-desc':
+                    return b.title.toLowerCase().localeCompare(a.title.toLowerCase());
+                case 'tasks-asc':
+                    return b.tasks.length - a.tasks.length;
+                case 'tasks-desc':
+                    return a.tasks.length - b.tasks.length;
+                case 'contributors-asc':
+                    return bContributors.size - aContributors.size;
+                case 'contributors-desc':
+                    return aContributors.size - bContributors.size;
                 default:
                     return 0;
             }
@@ -97,23 +123,16 @@ export const ProjectsList = (props: ProjectsListProps) => {
                 <div className="flex w-full flex-wrap gap-4">
                     <AnimatePresence mode="wait">
                         {sortedProjects.map((project, index) => (
-                            <motion.div
+                            <MotionWrapper
                                 key={project.id}
+                                id={project.id}
                                 layout
-                                initial={{ scale: 0.7, opacity: 0 }}
-                                exit={{ scale: 0.7, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{
-                                    type: 'spring',
-                                    stiffness: 200,
-                                    damping: 15,
-                                    mass: 0.9,
-                                    duration: 0.1,
-                                    delay: 0.02 * index,
-                                }}
+                                animationDelay={0.02}
+                                animationPosition={index}
+                                animationDuration={0.1}
                             >
                                 <ProjectPreviewCard project={project} key={project.id} />
-                            </motion.div>
+                            </MotionWrapper>
                         ))}
                     </AnimatePresence>
                 </div>
@@ -137,14 +156,12 @@ export const ProjectsList = (props: ProjectsListProps) => {
                         onSelectionChange={handleChangeSorting}
                         selectedKeys={[selectedSorting]}
                     >
-                        <SelectSection title="По популярности">
-                            <SelectItem key="popularity-asc">сначала популярные</SelectItem>
-                            <SelectItem key="popularity-desc">сначала неизвестные</SelectItem>
-                        </SelectSection>
-                        <SelectSection title="По дате создания">
-                            <SelectItem key="createdAt-asc">сначала новые</SelectItem>
-                            <SelectItem key="createdAt-desc">сначала старые</SelectItem>
-                        </SelectSection>
+                        {Object.entries(SORTING_CONFIG).map(([key, config]) => (
+                            <SelectSection key={key} title={config.label}>
+                                <SelectItem key={`${key}-asc`}>{config.asc}</SelectItem>
+                                <SelectItem key={`${key}-desc`}>{config.desc}</SelectItem>
+                            </SelectSection>
+                        ))}
                     </Select>
                 </div>
 

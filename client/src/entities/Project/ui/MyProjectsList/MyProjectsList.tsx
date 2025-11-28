@@ -30,11 +30,9 @@ export const MyProjectsList = (props: MyProjectsListProps) => {
                 maxH
                 flexGrow
                 maxW
-                className={classNames(
-                    'flex-grow self-stretch h-full border-1 border-primary rounded-xl p-4',
-                    {},
-                    [className],
-                )}
+                className={classNames('flex-grow self-stretch h-full rounded-xl p-4', {}, [
+                    className,
+                ])}
             >
                 <h1 className="text-black text-l">Загрузка</h1>
             </VStack>
@@ -47,11 +45,9 @@ export const MyProjectsList = (props: MyProjectsListProps) => {
                 maxH
                 flexGrow
                 maxW
-                className={classNames(
-                    'flex-grow self-stretch h-full border-1 border-primary rounded-xl p-4',
-                    {},
-                    [className],
-                )}
+                className={classNames('flex-grow self-stretch h-full rounded-xl p-4', {}, [
+                    className,
+                ])}
             >
                 <h1 className="text-black text-l">У Вас пока нет проектов</h1>
             </VStack>
@@ -61,11 +57,7 @@ export const MyProjectsList = (props: MyProjectsListProps) => {
     return (
         <VStack
             flexGrow
-            className={classNames(
-                'flex-grow self-stretch h-full border-1 border-primary rounded-xl p-4',
-                {},
-                [className],
-            )}
+            className={classNames('flex-grow self-stretch h-full rounded-xl p-4', {}, [className])}
         >
             <h1 className="text-black text-l">Ваши проекты</h1>
             <ul className="list-decimal list-inside">

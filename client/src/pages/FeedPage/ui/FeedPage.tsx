@@ -9,6 +9,7 @@ import { PageTitle } from '@/shared/ui/PageTitle';
 import { MyProjectsList } from '@/entities/Project';
 import { OwnTasksList } from '@/entities/Task';
 import { VStack } from '@/shared/ui/Stack';
+import { ChangeAnimationSettings } from '@/widgets/MotionWrapper';
 
 interface FeedPageProps {
     className?: string;
@@ -31,11 +32,20 @@ const FeedPage = memo((props: FeedPageProps) => {
                     [className],
                 )}
             >
-                <ProfileBlock className="col-span-3" />
-                <VStack maxH className="col-span-2">
-                    <MyProjectsList />
-                    <OwnTasksList />
+                <div className="w-full col-span-3 p-3 bg-white shadow-lg rounded-xl">
+                    <ProfileBlock />
+                </div>
+                <VStack maxH className="gap-4 col-span-2">
+                    <div className="w-full p-3 bg-white shadow-lg rounded-xl">
+                        <MyProjectsList />
+                    </div>
+                    <div className="w-full p-3 bg-white shadow-lg rounded-xl">
+                        <OwnTasksList />
+                    </div>
                 </VStack>
+                <div className="w-full col-span-3 p-3 bg-white shadow-lg rounded-xl">
+                    <ChangeAnimationSettings />
+                </div>
             </div>
         </Page>
     );

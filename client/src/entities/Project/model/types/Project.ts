@@ -24,13 +24,3 @@ export interface Project {
     startedAt: Date;
     finishedAt: Date;
 }
-
-export type SortingDirection = 'asc' | 'desc';
-export type ProjectSortingKeys = 'popularity' | 'createdAt';
-export type ProjectSorting = `${ProjectSortingKeys}-${SortingDirection}`;
-export const sortingMapper: Record<ProjectSorting, string> = {
-    'createdAt-asc': 'сначала новые',
-    'createdAt-desc': 'сначала старые',
-    'popularity-asc': 'сначала популярные',
-    'popularity-desc': 'сначала неизвестные',
-};

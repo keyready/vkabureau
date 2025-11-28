@@ -14,10 +14,12 @@ import { TaskSchema } from '@/entities/Task';
 import { ProfileSchema } from '@/entities/Profile';
 import { ForumSchema } from '@/entities/Forum';
 import { StatisticsSchema } from '@/entities/Statistics';
+import { MotionWrapperSchema } from '@/widgets/MotionWrapper';
 
 export interface StateSchema {
     user: UserSchema;
     profile: ProfileSchema;
+    motionWrapper: MotionWrapperSchema;
     [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
     // asynchronous reducers

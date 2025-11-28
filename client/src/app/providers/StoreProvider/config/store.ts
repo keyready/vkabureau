@@ -7,6 +7,7 @@ import { UserReducer } from '@/entities/User';
 import { $api } from '@/shared/api/api';
 import { rtkApi } from '@/shared/api/rtkApi';
 import { ProfileReducer } from '@/entities/Profile';
+import { MotionWrapperReducer } from '@/widgets/MotionWrapper';
 
 export function CreateReduxStore(
     initialState?: StateSchema,
@@ -16,6 +17,7 @@ export function CreateReduxStore(
         ...lazyReducers,
         user: UserReducer,
         profile: ProfileReducer,
+        motionWrapper: MotionWrapperReducer,
         [rtkApi.reducerPath]: rtkApi.reducer,
     };
 

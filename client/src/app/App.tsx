@@ -13,6 +13,7 @@ import { USER_LOCALSTORAGE_KEY } from '@/shared/const';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { fetchProfile, getProfileIsLoading } from '@/entities/Profile';
 import { PageLoader } from '@/shared/ui/PageLoader';
+import { WelcomeModal } from '@/widgets/MotionWrapper';
 
 export const App = () => {
     const { theme } = useTheme();
@@ -44,6 +45,7 @@ export const App = () => {
                     <HStack maxW>
                         <Sidebar />
                         <AppRouter />
+                        <WelcomeModal />
                     </HStack>
                     <Toaster />
                 </Suspense>
