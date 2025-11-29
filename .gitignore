@@ -3,3 +3,5 @@ client-files/
 client/node_modules
 .idea
 server/bin
+server/documents
+server/messages

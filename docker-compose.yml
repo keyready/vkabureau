@@ -5,7 +5,7 @@ services:
       context: ./server
       dockerfile: Dockerfile
     ports:
-      - 2869:2869
+      - "127.0.0.1:2869:2869"
     volumes:
       - ./server/documents:/app/static/documents
       - ./server/messages:/app/static/messages
@@ -31,7 +31,7 @@ services:
     container_name: vkalance_mongo-express
     restart: always
     ports:
-      - 8081:8081
+      - "127.0.0.1:8081:8081"
     env_file:
       - ./server/.env
     depends_on:
@@ -45,8 +45,7 @@ services:
       dockerfile: Dockerfile
     container_name: vkabureau-client-builder
     volumes:
-      - ./client-files:/dist
-    command: sh -c "npm run build"
+      - ./client-files:/client/dist
 
 networks:
   vkalance-net:
